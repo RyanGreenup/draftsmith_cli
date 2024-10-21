@@ -47,8 +47,7 @@ Install the backend API by following the [API Setup Guide](https://ryangreenup.g
   - `draftsmith tags --help`
   - `draftsmith tasks --help`
 
-   <details>
-   <summary>
+   <details><summary>
 
    Click to Unfold</summary>
 
@@ -95,9 +94,7 @@ Install the backend API by following the [API Setup Guide](https://ryangreenup.g
     - `tree`
         - `add_parent`
         - `remove_child`
-        - `list`
-
-   </details>
+        - `list`</details>
 
 - **Graphical Interfaces**: Check the user manuals for PyQt and Flask UIs for detailed navigation tips.
 
