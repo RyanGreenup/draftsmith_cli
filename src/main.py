@@ -220,8 +220,24 @@ def rename(old_name: str, new_name: str):
 
 
 @tags_app.command("delete")
-def delete():
-    typer.echo("Deleting tag...")
+def delete(tag_name: str):
+    tags = get_tag_names()
+    if tag_name not in tags:
+        typer.echo(f"Error: Tag '{tag_name}' does not exist.")
+        return
+
+    tags_with_notes = get_tags_with_notes()
+    tag_id = next((tag['id'] for tag in tags_with_notes if tag['name'] == tag_name), None)
+
+    if tag_id is None:
+        typer.echo(f"Error: Unable to find tag '{tag_name}'")
+        return
+
+    result = delete_tag(tag_id)
+    if result.get('success'):
+        typer.echo(f"Successfully deleted tag '{tag_name}'.")
+    else:
+        typer.echo(f"Failed to delete tag. Error: {result.get('error', 'Unknown error')}")
 
 
 # Tags Tree Commands
