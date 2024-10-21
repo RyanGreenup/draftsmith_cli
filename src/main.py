@@ -479,7 +479,18 @@ task_app.add_typer(task_tree_app, name="tree")
 
 @task_tree_app.command("list")
 def tree_list():
-    typer.echo("Listing tasks in tree structure...")
+    tasks_tree = get_tasks_tree()
+    if tasks_tree:
+        def print_tree(node, level=0):
+            prefix = "  " * level
+            typer.echo(f"{prefix}├─ {node['title']} (ID: {node['id']})")
+            for child in node.get('children', []):
+                print_tree(child, level + 1)
+
+        for root_task in tasks_tree:
+            print_tree(root_task)
+    else:
+        typer.echo("No tasks found or unable to retrieve the tasks tree.")
 
 
 @task_tree_app.command("add_parent")
