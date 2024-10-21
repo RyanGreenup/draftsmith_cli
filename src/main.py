@@ -599,8 +599,20 @@ def add_parent(
 
 
 @task_tree_app.command("remove_child")
-def remove_child():
-    typer.echo("Removing child task...")
+def remove_child(
+    child_id: int = typer.Argument(..., help="ID of the child task to remove from its parent")
+):
+    """
+    Remove a child task from its parent in the task hierarchy.
+    """
+    try:
+        response = update_task_hierarchy(child_id, {"parent_id": None})
+        if response.get("success"):
+            typer.echo(f"Successfully removed task {child_id} from its parent.")
+        else:
+            typer.echo(f"Failed to remove child. Error: {response.get('error', 'Unknown error')}")
+    except Exception as e:
+        typer.echo(f"An error occurred: {str(e)}")
 
 
 # Task Schedule Commands
