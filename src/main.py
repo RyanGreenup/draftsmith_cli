@@ -2,6 +2,7 @@
 import typer
 import json
 import polars as pl
+import requests
 from typing import List
 from datetime import datetime
 from notes import (
