@@ -106,8 +106,13 @@ def update(id: int, title: str | None, content: str | None):
 
 
 @notes_app.command("create")
-def create():
-    typer.echo("Creating note...")
+def create(title: str, content: str):
+    new_note = create_note("http://localhost:37238", {
+        'title': title,
+        'content': content
+    })
+    typer.echo(f"Note created successfully with ID: {new_note['id']}")
+    get(new_note['id'], df=True)
 
 
 @notes_app.command("delete")
