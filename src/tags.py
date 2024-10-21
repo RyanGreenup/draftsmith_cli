@@ -225,3 +225,25 @@ def update_tag_hierarchy(
     hierarchy_data = {"parent_tag_id": parent_tag_id}
     response = requests.put(url, json=hierarchy_data, headers=headers)
     return response.json()
+
+
+def delete_tag_hierarchy_entry(
+    tag_hierarchy_id: int, base_url: str = "http://localhost:37238"
+) -> Dict[str, str]:
+    """
+    Delete a tag hierarchy entry by sending a DELETE request.
+
+    Args:
+        tag_hierarchy_id (int): The ID of the tag hierarchy entry to delete.
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        Dict[str, str]: The response from the server as a JSON object.
+
+    Example:
+        >>> delete_tag_hierarchy_entry(3)
+        {"message": "Tag hierarchy entry deleted successfully"}
+    """
+    url = f"{base_url}/tags/hierarchy/{tag_hierarchy_id}"
+    response = requests.delete(url)
+    return response.json()

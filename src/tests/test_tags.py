@@ -11,6 +11,7 @@ from tags import (
     get_tag_names,
     create_tag_hierarchy,
     update_tag_hierarchy,
+    delete_tag_hierarchy_entry,
 )
 
 
@@ -129,6 +130,21 @@ def test_update_tag_hierarchy():
     with requests_mock.Mocker() as m:
         m.put(f"{base_url}/tags/hierarchy/{tag_id}", json=expected_response)
         response = update_tag_hierarchy(tag_id, parent_tag_id, base_url)
+        assert response == expected_response
+
+
+def test_delete_tag_hierarchy_entry():
+    base_url = "http://localhost:37238"
+    tag_hierarchy_id = 3
+    expected_response: Dict[str, str] = {
+        "message": "Tag hierarchy entry deleted successfully"
+    }
+
+    with requests_mock.Mocker() as m:
+        m.delete(
+            f"{base_url}/tags/hierarchy/{tag_hierarchy_id}", json=expected_response
+        )
+        response = delete_tag_hierarchy_entry(tag_hierarchy_id, base_url)
         assert response == expected_response
 
 
