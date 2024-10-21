@@ -362,7 +362,7 @@ def create_task_cli(
     note_id: int,
     title: str = typer.Option(None, "--title", "-t"),
     description: str = typer.Option(None, "--description", "-d"),
-    priority: int = typer.Option(None, "--priority", "-p"),
+    priority: int = typer.Option(5, "--priority", "-p")
 ):
     task_data = {
         "note_id": note_id,
