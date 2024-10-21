@@ -231,38 +231,35 @@ def delete_task_schedule(
     return response.json()
 
 
-def create_task_schedule(
+def create_task_clock(
     task_id: int,
-    start_datetime: str,
-    end_datetime: str,
+    clock_in: str,
+    clock_out: str,
     base_url: str = "http://localhost:37238",
 ) -> Dict[str, Any]:
     """
-    Create a task schedule (clock in) entry by sending a POST request.
+    Create a task clock entry by sending a POST request.
 
     Args:
-        task_id (int): The ID of the task.
-        start_datetime (str): The start datetime in ISO 8601 format.
-        end_datetime (str): The end datetime in ISO 8601 format.
+        task_id (int): The ID of the task to create a clock entry for.
+        clock_in (str): ISO 8601 formatted string representing the clock-in time.
+        clock_out (str): ISO 8601 formatted string representing the clock-out time.
         base_url (str): The base URL of the API (default: "http://localhost:37238").
 
     Returns:
         Dict[str, Any]: The response from the server as a JSON object.
 
     Example:
-        >>> create_task_schedule(
-                2,
-                "2023-06-01T09:00:00Z",
-                "2023-06-01T17:00:00Z"
-            )
+        >>> create_task_clock(
+            2,
+            "2023-06-01T09:00:00Z",
+            "2023-06-01T17:00:00Z"
+        )
         {"id": 2, "message": "Task clock entry created successfully"}
     """
-    url = f"{base_url}/task_schedules"
+    url = f"{base_url}/task_clocks"
     headers = {"Content-Type": "application/json"}
-    schedule_data = {
-        "task_id": task_id,
-        "start_datetime": start_datetime,
-        "end_datetime": end_datetime,
-    }
-    response = requests.post(url, json=schedule_data, headers=headers)
+    data = {"task_id": task_id, "clock_in": clock_in, "clock_out": clock_out}
+    response = requests.post(url, json=data, headers=headers)
+    response.raise_for_status()  # Raise an error if the response is not successful
     return response.json()
