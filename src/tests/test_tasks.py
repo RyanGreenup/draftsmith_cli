@@ -13,6 +13,7 @@ from tasks import (
     delete_task_schedule,
     create_task_clock,
     update_task_clock,
+    delete_task_clock,
 )
 
 
@@ -258,6 +259,20 @@ def test_update_task_clock():
         # Mocking the response for updating the task clock
         m.put(f"{base_url}/task_clocks/{task_clock_id}", json=expected_response)
         response = update_task_clock(task_clock_id, update_data, base_url)
+        assert response == expected_response
+
+
+def test_delete_task_clock():
+    base_url = "http://localhost:8080"
+    task_clock_id = 1
+    expected_response: Dict[str, Any] = {
+        "message": "Task clock entry deleted successfully"
+    }
+
+    with requests_mock.Mocker() as m:
+        # Mocking the response for deleting the task clock entry
+        m.delete(f"{base_url}/task_clocks/{task_clock_id}", json=expected_response)
+        response = delete_task_clock(task_clock_id, base_url)
         assert response == expected_response
 
 

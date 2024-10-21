@@ -291,3 +291,25 @@ def update_task_clock(
     headers = {"Content-Type": "application/json"}
     response = requests.put(url, json=update_data, headers=headers)
     return response.json()
+
+
+def delete_task_clock(
+    task_clock_id: int, base_url: str = "http://localhost:8080"
+) -> Dict[str, Any]:
+    """
+    Delete a task clock entry by sending a DELETE request.
+
+    Args:
+        task_clock_id (int): The ID of the task clock to delete.
+        base_url (str): The base URL of the API (default: "http://localhost:8080").
+
+    Returns:
+        Dict[str, Any]: The response from the server as a JSON object.
+
+    Example:
+        >>> delete_task_clock(1)
+        {"message": "Task clock entry deleted successfully"}
+    """
+    url = f"{base_url}/task_clocks/{task_clock_id}"
+    response = requests.delete(url)
+    return response.json()
