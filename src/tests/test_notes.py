@@ -10,6 +10,7 @@ from notes import (
     search_notes,
     create_note_hierarchy,
     update_note_hierarchy,
+    delete_note_hierarchy,
 )
 from urllib.parse import quote
 
@@ -190,6 +191,22 @@ def test_update_note_hierarchy():
     with requests_mock.Mocker() as m:
         m.put(f"{base_url}/notes/hierarchy/{note_id}", json=expected_response)
         response = update_note_hierarchy(note_id, hierarchy_data, base_url)
+        assert response == expected_response
+
+
+def test_delete_note_hierarchy():
+    base_url = "http://localhost:37238"
+    note_id = 2
+
+    expected_response: Dict[str, Any] = {
+        "message": "Note hierarchy entry deleted successfully"
+    }
+
+    with requests_mock.Mocker() as m:
+        # Mocking the delete response
+        m.delete(f"{base_url}/notes/hierarchy/{note_id}", json=expected_response)
+
+        response = delete_note_hierarchy(note_id, base_url)
         assert response == expected_response
 
 
