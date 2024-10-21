@@ -318,8 +318,38 @@ def filter(tag_name: str):
 
 
 @tags_app.command("search")
-def search():
-    typer.echo("Searching tags...")
+def search(query: str, tags: List[str] = typer.Option([], "--tag", "-t")):
+    # First, perform the normal search
+    search_results = search_notes(query)
+
+    if not tags:
+        # If no tags are specified, return all search results
+        df_print(search_results)
+        return
+
+    # Get all tags with their associated notes
+    tags_with_notes = get_tags_with_notes()
+
+    # Create a set of note IDs that have all the specified tags
+    tagged_note_ids = set()
+    for tag_name in tags:
+        tag = next((t for t in tags_with_notes if t['name'] == tag_name), None)
+        if tag is None:
+            typer.echo(f"Warning: Tag '{tag_name}' not found.")
+            continue
+        if not tagged_note_ids:
+            tagged_note_ids = set(note['id'] for note in tag['notes'])
+        else:
+            tagged_note_ids &= set(note['id'] for note in tag['notes'])
+
+    # Filter the search results to only include notes with all specified tags
+    filtered_results = [note for note in search_results if note['id'] in tagged_note_ids]
+
+    if filtered_results:
+        typer.echo(f"Search results for query '{query}' with tags {', '.join(tags)}:")
+        df_print(filtered_results)
+    else:
+        typer.echo(f"No results found for query '{query}' with tags {', '.join(tags)}.")
 
 
 # Task Commands
