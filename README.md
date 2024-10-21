@@ -41,60 +41,12 @@ Install the backend API by following the [API Setup Guide](https://ryangreenup.g
 
 ## Usage
 
-- **CLI Commands**: The CLI commands are described through the `--help` flag.
+- **CLI Commands**: The CLI commands are described through the `--help` flag. [^1729492544]
+
   - `draftsmith --help`
   - `draftsmith notes --help`
   - `draftsmith tags --help`
   - `draftsmith tasks --help`
-
-   <details><summary>
-
-   Click to Unfold</summary>
-
-- `task`
-    - `delete`
-    - `list`
-    - `rename`
-    - `update`
-    - `clocks`
-        - `create`
-        - `delete`
-        - `list`
-        - `update`
-        - `in`
-        - `out`
-    - `tree`
-        - `add_parent`
-        - `remove_child`
-    - `schedule`
-        - `Create`
-        - `delete`
-        - `list`
-        - `update`
-- notes
-    `- create`
-    - `delete`
-    - `get`
-        - Get the contents of a note
-    - `list`
-        - `List the notes`
-    - `update`
-    - `search`
-    - `tree`
-        - `add_parent`
-        - `remove_child`
-        - `list`
-- tags
-    `- assign`
-    - `delete`
-    - `filter`
-    - `list`
-    - `rename`
-    - `search`
-    - `tree`
-        - `add_parent`
-        - `remove_child`
-        - `list`</details>
 
 - **Graphical Interfaces**: Check the user manuals for PyQt and Flask UIs for detailed navigation tips.
 
@@ -132,3 +84,52 @@ Connect with me on Discord (`Eisenvig`) / Matrix (`@eisenvig:matrix.org`), or fo
 
 Structured thinking is increasingly important now that LLM's are making information more accessible than ever before.
 
+
+## Footnotes
+
+
+[^1729492544]:
+    - `task`
+        - `delete`
+        - `list`
+        - `rename`
+        - `update`
+        - `clocks`
+            - `create`
+            - `delete`
+            - `list`
+            - `update`
+            - `in`
+            - `out`
+        - `tree`
+            - `add_parent`
+            - `remove_child`
+        - `schedule`
+            - `Create`
+            - `delete`
+            - `list`
+            - `update`
+    - notes
+        `- create`
+        - `delete`
+        - `get`
+            - Get the contents of a note
+        - `list`
+            - `List the notes`
+        - `update`
+        - `search`
+        - `tree`
+            - `add_parent`
+            - `remove_child`
+            - `list`
+    - tags
+        `- assign`
+        - `delete`
+        - `filter`
+        - `list`
+        - `rename`
+        - `search`
+        - `tree`
+            - `add_parent`
+            - `remove_child`
+            - `list`
