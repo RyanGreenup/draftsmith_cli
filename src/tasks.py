@@ -32,7 +32,11 @@ def create_task(
     url = f"{base_url}/tasks"
     headers = {"Content-Type": "application/json"}
     response = requests.post(url, json=task_data, headers=headers)
-    response.raise_for_status()  # Raise an exception for HTTP errors
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        print(f"Error response content: {response.content}")
+        raise
     return response.json()
 
 

@@ -357,17 +357,31 @@ def search(query: str, tags: List[str] = typer.Option([], "--tag", "-t")):
 
 # Task Commands
 @task_app.command("create")
-def create_task_cli(note_id: int):
+def create_task_cli(
+    note_id: int,
+    title: str = typer.Option(None, "--title", "-t"),
+    description: str = typer.Option(None, "--description", "-d"),
+    priority: int = typer.Option(None, "--priority", "-p"),
+):
     task_data = {
         "note_id": note_id,
-        "status": "todo"  # Default status
+        "status": "todo",
+        "title": title,
+        "description": description,
+        "priority": priority
     }
-    new_task = create_task(task_data)
-    if new_task:
-        typer.echo(f"Task created successfully for note ID: {note_id}")
-        df_print([new_task])
-    else:
-        typer.echo(f"Failed to create task for note ID: {note_id}")
+    # Remove None values
+    task_data = {k: v for k, v in task_data.items() if v is not None}
+    try:
+        new_task = create_task(task_data)
+        if new_task:
+            typer.echo(f"Task created successfully for note ID: {note_id}")
+            df_print([new_task])
+        else:
+            typer.echo(f"Failed to create task for note ID: {note_id}")
+    except requests.exceptions.HTTPError as e:
+        typer.echo(f"HTTP Error occurred: {e}")
+        typer.echo(f"Response content: {e.response.content}")
 
 
 
