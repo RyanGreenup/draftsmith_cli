@@ -84,11 +84,12 @@ Connect with me on Discord (`Eisenvig`) / Matrix (`@eisenvig:matrix.org`), or fo
 
 Structured thinking is increasingly important now that LLM's are making information more accessible than ever before.
 
+<!--
 
 ## Footnotes
 
 
-<!-- [^1729492544]:
+[^1729492544]:
     - `task`
         - `delete`
         - `list`

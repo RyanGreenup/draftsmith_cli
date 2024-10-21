@@ -1,7 +1,6 @@
 import requests
 from typing import Dict, Any, List
 from urllib.parse import quote
-import pytest
 
 
 def create_tag(
@@ -279,5 +278,3 @@ def list_tags_with_notes(
     return response.json()
 
 
-if __name__ == "__main__":
-    pytest.main()
