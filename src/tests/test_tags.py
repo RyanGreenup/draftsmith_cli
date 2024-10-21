@@ -2,7 +2,7 @@ import pytest
 import requests_mock
 from typing import Dict, Any, List
 from urllib.parse import quote
-from tags import create_tag, assign_tag_to_note, update_tag
+from tags import create_tag, assign_tag_to_note, update_tag, delete_tag
 
 
 def test_create_tag():
@@ -50,4 +50,15 @@ def test_update_tag():
     with requests_mock.Mocker() as m:
         m.put(f"{base_url}/tags/{tag_id}", json=expected_response)
         response = update_tag(tag_id, new_name, base_url)
+        assert response == expected_response
+
+
+def test_delete_tag():
+    base_url = "http://localhost:37238"
+    tag_id = 5
+    expected_response: Dict[str, Any] = {"message": "Tag deleted successfully"}
+
+    with requests_mock.Mocker() as m:
+        m.delete(f"{base_url}/tags/{tag_id}", json=expected_response)
+        response = delete_tag(tag_id, base_url)
         assert response == expected_response

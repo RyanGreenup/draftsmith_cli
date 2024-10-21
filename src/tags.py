@@ -75,3 +75,23 @@ def update_tag(
     tag_data = {"name": new_name}
     response = requests.put(url, json=tag_data, headers=headers)
     return response.json()
+
+
+def delete_tag(tag_id: int, base_url: str = "http://localhost:37238") -> Dict[str, Any]:
+    """
+    Delete a tag by sending a DELETE request.
+
+    Args:
+        tag_id (int): The ID of the tag to delete.
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        Dict[str, Any]: The response from the server as a JSON object.
+
+    Example:
+        >>> delete_tag(5)
+        {"message": "Tag deleted successfully"}
+    """
+    url = f"{base_url}/tags/{tag_id}"
+    response = requests.delete(url)
+    return response.json()
