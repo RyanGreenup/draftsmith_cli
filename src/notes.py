@@ -1,5 +1,6 @@
 import requests
 from typing import Dict, Any, List
+from urllib.parse import quote
 
 # POST
 def create_note(url: str, note_data: Dict[str, str]) -> Dict[str, Any]:
@@ -139,3 +140,24 @@ def get_notes_no_content(base_url: str = "http://localhost:37238") -> List[Dict[
     response.raise_for_status()  # Raise an error for bad responses
     return response.json()
 
+
+def search_notes(query: str, base_url: str = "http://localhost:37238") -> List[Dict[str, Any]]:
+    """
+    Search for notes based on a query string by sending a GET request.
+
+    Args:
+        query (str): The search query string.
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        List[Dict[str, Any]]: A list of notes that match the search criteria as JSON objects.
+
+    Example:
+        >>> search_notes("updated content")
+        [{"id": 2, "title": "Foo"}]
+    """
+    encoded_query = quote(query)
+    url = f"{base_url}/notes/search?q={encoded_query}"
+    response = requests.get(url)
+    response.raise_for_status()  # Raise an error for bad responses
+    return response.json()

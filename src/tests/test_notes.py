@@ -1,7 +1,8 @@
 import pytest
 import requests_mock
 from typing import Dict, Any, List
-from notes import create_note, update_note, delete_note, get_notes, get_notes_no_content
+from notes import create_note, update_note, delete_note, get_notes, get_notes_no_content, search_notes
+from urllib.parse import quote
 
 def test_create_note():
     url = "http://localhost:37238/notes"
@@ -132,6 +133,24 @@ def test_get_notes_no_content():
         # Mocking the response for getting notes without content
         m.get(f"{base_url}/notes/no-content", json=expected_response)
         response = get_notes_no_content(base_url)
+        assert response == expected_response
+
+
+def test_search_notes():
+    base_url = "http://localhost:37238"
+    query = "updated content"
+    expected_response: List[Dict[str, Any]] = [
+        {
+            "id": 2,
+            "title": "Foo"
+        }
+    ]
+
+    with requests_mock.Mocker() as m:
+        # Mocking the response for searching notes
+        encoded_query = quote(query)
+        m.get(f"{base_url}/notes/search?q={encoded_query}", json=expected_response)
+        response = search_notes(query, base_url)
         assert response == expected_response
 
 if __name__ == '__main__':
