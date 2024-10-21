@@ -362,7 +362,7 @@ def create_task_cli(
     note_id: int,
     title: str = typer.Option(None, "--title", "-t"),
     description: str = typer.Option(None, "--description", "-d"),
-    priority: int = typer.Option(None, "--priority", "-p"),
+    priority: int = typer.Option(3, "--priority", "-p", min=1, max=5),
     goal_relationship: int = typer.Option(3, "--goal-relationship", "-g", min=1, max=5)
 ):
     task_data = {
@@ -507,6 +507,12 @@ def tree_list():
             print_tree(root_task)
     else:
         typer.echo("No tasks found or unable to retrieve the tasks tree.")
+
+@task_tree_app.command("list")
+def cli_task_list():
+    # Implement this by using:
+    # get_tasks_details()
+    print("TODO")
 
 
 @task_tree_app.command("add_parent")
