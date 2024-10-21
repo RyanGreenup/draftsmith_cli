@@ -355,8 +355,19 @@ def search(query: str, tags: List[str] = typer.Option([], "--tag", "-t")):
 
 # Task Commands
 @task_app.command("create")
-def create_task():
-    typer.echo("Creating task...")
+def create_task(title: str, description: str = "", due_date: str = None, priority: int = 1):
+    task_data = {
+        "title": title,
+        "description": description,
+        "due_date": due_date,
+        "priority": priority
+    }
+    new_task = create_task(task_data)
+    if new_task:
+        typer.echo(f"Task created successfully with ID: {new_task['id']}")
+        df_print([new_task])
+    else:
+        typer.echo("Failed to create task.")
 
 
 @task_app.command("rename")
