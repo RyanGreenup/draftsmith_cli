@@ -2,7 +2,13 @@ import pytest
 import requests_mock
 from typing import Dict, Any, List
 from urllib.parse import quote
-from tags import create_tag, assign_tag_to_note, update_tag, delete_tag
+from tags import (
+    create_tag,
+    assign_tag_to_note,
+    update_tag,
+    delete_tag,
+    get_tags_with_notes,
+)
 
 
 def test_create_tag():
@@ -62,3 +68,23 @@ def test_delete_tag():
         m.delete(f"{base_url}/tags/{tag_id}", json=expected_response)
         response = delete_tag(tag_id, base_url)
         assert response == expected_response
+
+
+def test_get_tags_with_notes():
+    base_url = "http://localhost:37238"
+    expected_response: List[Dict[str, Any]] = [
+        {"tag_id": 1, "tag_name": "important", "notes": None},
+        {"tag_id": 3, "tag_name": "todo", "notes": [{"id": 2, "title": "Foo"}]},
+        {"tag_id": 2, "tag_name": "urgent", "notes": [{"id": 2, "title": "Foo"}]},
+        {"tag_id": 4, "tag_name": "done", "notes": None},
+        {"tag_id": 5, "tag_name": "important", "notes": None},
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.get(f"{base_url}/tags/with-notes", json=expected_response)
+        response = get_tags_with_notes(base_url)
+        assert response == expected_response
+
+
+if __name__ == "__main__":
+    pytest.main()

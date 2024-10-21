@@ -95,3 +95,60 @@ def delete_tag(tag_id: int, base_url: str = "http://localhost:37238") -> Dict[st
     url = f"{base_url}/tags/{tag_id}"
     response = requests.delete(url)
     return response.json()
+
+
+def get_tags_with_notes(
+    base_url: str = "http://localhost:37238",
+) -> List[Dict[str, Any]]:
+    """
+    Retrieve a list of tags along with their associated notes.
+
+    Args:
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        List[Dict[str, Any]]: A list of tags and their associated notes.
+
+    Example:
+        >>> get_tags_with_notes()
+        [
+          {
+            "tag_id": 1,
+            "tag_name": "important",
+            "notes": None
+          },
+          {
+            "tag_id": 3,
+            "tag_name": "todo",
+            "notes": [
+              {
+                "id": 2,
+                "title": "Foo"
+              }
+            ]
+          },
+          {
+            "tag_id": 2,
+            "tag_name": "urgent",
+            "notes": [
+              {
+                "id": 2,
+                "title": "Foo"
+              }
+            ]
+          },
+          {
+            "tag_id": 4,
+            "tag_name": "done",
+            "notes": None
+          },
+          {
+            "tag_id": 5,
+            "tag_name": "important",
+            "notes": None
+          }
+        ]
+    """
+    url = f"{base_url}/tags/with-notes"
+    response = requests.get(url)
+    return response.json()
