@@ -46,6 +46,59 @@ Install the backend API by following the [API Setup Guide](https://ryangreenup.g
   - `draftsmith notes --help`
   - `draftsmith tags --help`
   - `draftsmith tasks --help`
+
+   <details>
+   <summary>
+
+   Click to Unfold</summary>
+
+- `task`
+    - `delete`
+    - `list`
+    - `rename`
+    - `update`
+    - `clocks`
+        - `create`
+        - `delete`
+        - `list`
+        - `update`
+        - `in`
+        - `out`
+    - `tree`
+        - `add_parent`
+        - `remove_child`
+    - `schedule`
+        - `Create`
+        - `delete`
+        - `list`
+        - `update`
+- notes
+    `- create`
+    - `delete`
+    - `get`
+        - Get the contents of a note
+    - `list`
+        - `List the notes`
+    - `update`
+    - `search`
+    - `tree`
+        - `add_parent`
+        - `remove_child`
+        - `list`
+- tags
+    `- assign`
+    - `delete`
+    - `filter`
+    - `list`
+    - `rename`
+    - `search`
+    - `tree`
+        - `add_parent`
+        - `remove_child`
+        - `list`
+
+   </details>
+
 - **Graphical Interfaces**: Check the user manuals for PyQt and Flask UIs for detailed navigation tips.
 
 ## Contribution
