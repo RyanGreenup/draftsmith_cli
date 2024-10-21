@@ -10,6 +10,7 @@ from tasks import (
     get_tasks_tree,
     create_task_schedule,
     update_task_schedule,
+    delete_task_schedule,
 )
 
 
@@ -206,6 +207,20 @@ def test_update_task_schedule():
         # Mocking the response for updating the task schedule
         m.put(f"{base_url}/task_schedules/{schedule_id}", json=expected_response)
         response = update_task_schedule(schedule_id, update_data, base_url)
+        assert response == expected_response
+
+
+def test_delete_task_schedule():
+    base_url = "http://localhost:37238"
+    schedule_id = 1
+
+    expected_response: Dict[str, Any] = {
+        "message": "Task schedule deleted successfully"
+    }
+
+    with requests_mock.Mocker() as m:
+        m.delete(f"{base_url}/task_schedules/{schedule_id}", json=expected_response)
+        response = delete_task_schedule(schedule_id, base_url)
         assert response == expected_response
 
 
