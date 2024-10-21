@@ -130,7 +130,18 @@ notes_app.add_typer(notes_tree_app, name="tree")
 
 @notes_tree_app.command("list")
 def tree_list():
-    typer.echo("Listing notes in tree structure...")
+    notes_tree = get_notes_tree()
+    if notes_tree:
+        def print_tree(node, level=0):
+            prefix = "  " * level
+            typer.echo(f"{prefix}├─ {node['title']} (ID: {node['id']})")
+            for child in node.get('children', []):
+                print_tree(child, level + 1)
+
+        for root_note in notes_tree:
+            print_tree(root_note)
+    else:
+        typer.echo("No notes found or unable to retrieve the notes tree.")
 
 
 @notes_tree_app.command("add_parent")
