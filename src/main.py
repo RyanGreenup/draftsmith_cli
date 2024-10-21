@@ -145,8 +145,12 @@ def tree_list():
 
 
 @notes_tree_app.command("add_parent")
-def add_parent():
-    typer.echo("Adding parent to note...")
+def add_parent(child_id: int, parent_id: int):
+    result = create_note_hierarchy({"parent_id": parent_id, "child_id": child_id})
+    if result.get('success'):
+        typer.echo(f"Successfully added note {parent_id} as parent of note {child_id}.")
+    else:
+        typer.echo(f"Failed to add parent. Error: {result.get('error', 'Unknown error')}")
 
 
 @notes_tree_app.command("remove_child")
