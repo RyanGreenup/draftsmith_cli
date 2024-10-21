@@ -1,2 +1,4 @@
 src/__pycache__
 src/tests/__pycache__
+.aider*
+example.py

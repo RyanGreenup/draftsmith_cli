@@ -176,7 +176,7 @@ def test_get_tasks_tree():
 
 
 def test_create_task_schedule():
-    base_url = "http://localhost:8080"
+    base_url = "http://localhost:37238"
     task_schedule_data: Dict[str, str] = {
         "task_id": 2,
         "start_datetime": "2023-06-01T09:00:00Z",
@@ -245,7 +245,7 @@ def test_create_task_clock():
 
 
 def test_update_task_clock():
-    base_url = "http://localhost:8080"
+    base_url = "http://localhost:37238"
     task_clock_id = 1
     update_data: Dict[str, str] = {
         "clock_in": "2023-05-20T09:00:00Z",
@@ -263,7 +263,7 @@ def test_update_task_clock():
 
 
 def test_delete_task_clock():
-    base_url = "http://localhost:8080"
+    base_url = "http://localhost:37238"
     task_clock_id = 1
     expected_response: Dict[str, Any] = {
         "message": "Task clock entry deleted successfully"

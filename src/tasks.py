@@ -158,7 +158,7 @@ def get_tasks_tree(base_url: str = "http://localhost:37238") -> List[Dict[str, A
 
 
 def create_task_schedule(
-    task_schedule_data: Dict[str, str], base_url: str = "http://localhost:8080"
+    task_schedule_data: Dict[str, str], base_url: str = "http://localhost:37238"
 ) -> Dict[str, Any]:
     """
     Create a new task schedule by sending a POST request to the API.
@@ -166,7 +166,7 @@ def create_task_schedule(
     Args:
         task_schedule_data (Dict[str, str]): A dictionary containing the task schedule data,
                                              e.g., {'task_id': 2, 'start_datetime': '2023-06-01T09:00:00Z', 'end_datetime': '2023-06-01T17:00:00Z'}.
-        base_url (str): The base URL of the API (default: "http://localhost:8080").
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
 
     Returns:
         Dict[str, Any]: The response from the server as a JSON object.
@@ -272,7 +272,7 @@ def create_task_clock(
 def update_task_clock(
     task_clock_id: int,
     update_data: Dict[str, str],
-    base_url: str = "http://localhost:8080",
+    base_url: str = "http://localhost:37238",
 ) -> Dict[str, Any]:
     """
     Update a task clock entry by sending a PUT request.
@@ -281,7 +281,7 @@ def update_task_clock(
         task_clock_id (int): The ID of the task clock to update.
         update_data (Dict[str, str]): A dictionary containing the data to update,
                                        e.g., {'clock_in': '2023-05-20T09:00:00Z', 'clock_out': '2023-05-20T17:00:00Z'}.
-        base_url (str): The base URL of the API (default: "http://localhost:8080").
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
 
     Returns:
         Dict[str, Any]: The response from the server as a JSON object.
@@ -298,14 +298,14 @@ def update_task_clock(
 
 
 def delete_task_clock(
-    task_clock_id: int, base_url: str = "http://localhost:8080"
+    task_clock_id: int, base_url: str = "http://localhost:37238"
 ) -> Dict[str, Any]:
     """
     Delete a task clock entry by sending a DELETE request.
 
     Args:
         task_clock_id (int): The ID of the task clock to delete.
-        base_url (str): The base URL of the API (default: "http://localhost:8080").
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
 
     Returns:
         Dict[str, Any]: The response from the server as a JSON object.
@@ -340,10 +340,11 @@ def get_task_clocks(
 
     return []
 
+
 def update_task_hierarchy(
     child_id: int,
     hierarchy_data: Dict[str, Any],
-    base_url: str = "http://localhost:37238"
+    base_url: str = "http://localhost:37238",
 ) -> Dict[str, Any]:
     """
     Update the hierarchy of a task.

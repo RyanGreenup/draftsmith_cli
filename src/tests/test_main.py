@@ -3,6 +3,7 @@ import pytest
 from io import StringIO
 from main import df_print
 
+
 def test_df_print(capsys):
     data = {"column1": [1, 2, 3], "column2": [4, 5, 6]}
 

@@ -58,6 +58,7 @@ tags_tree_app = typer.Typer()
 task_app = typer.Typer()
 task_tree_app = typer.Typer()
 task_schedule_app = typer.Typer()
+task_clock_app = typer.Typer()
 
 # Register sub-commands with the main typer
 app.add_typer(notes_app, name="notes")
@@ -419,6 +420,20 @@ def create_task_cli(
         typer.echo(f"Failed to create task. Error: {e}")
 
 
+def get_task_id(note_id: int) -> int:
+    """
+    Get a task id given a note id.
+    """
+    tasks = get_tasks_details()
+    tasks = [task for task in tasks if task["note_id"] == id]
+    if not tasks:
+        raise ValueError(f"No tasks found for note ID {id}.")
+    # There should only be one task per note ID
+    # So take the first task's ID
+    task_id = tasks[0]["id"]
+    return task_id
+
+
 @task_app.command("delete")
 def task_delete_cli(id: int, use_note_id: bool = False):
     """
@@ -427,13 +442,7 @@ def task_delete_cli(id: int, use_note_id: bool = False):
     The `use_note_id` flag can be used to delete the task by note ID instead of task ID.
     """
     if use_note_id:
-        tasks = get_tasks_details()
-        tasks = [task for task in tasks if task["note_id"] == id]
-        if not tasks:
-            typer.echo(f"No tasks found for note ID {id}.")
-            return
-        # There should only be one task per note ID
-        id = tasks[0]["id"]
+        id = get_task_id(id)
     response = delete_task(id)
     print(response)
 
@@ -452,10 +461,10 @@ def rename(task_id: int, new_title: str):
 @task_app.command("update")
 def update(
     task_id: int,
-    title: str = None,
-    description: str = None,
-    due_date: str = None,
-    priority: int = None,
+    title: str | None = None,
+    description: str | None = None,
+    due_date: str | None = None,
+    priority: int | None = None,
 ):
     update_data = {}
     if title is not None:
@@ -494,7 +503,7 @@ def schedule(task_id: int, schedule_type: str, schedule_value: str):
         typer.echo("Failed to create schedule.")
 
 
-@task_app.command("clock_in")
+@task_clock_app.command("in")
 def clock_in(task_id: int):
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     clock_data = {"task_id": task_id, "clock_in": current_time, "clock_out": None}
@@ -508,7 +517,57 @@ def clock_in(task_id: int):
         typer.echo(f"Failed to clock in for task ID {task_id}")
 
 
-@task_app.command("clock_out")
+@task_clock_app.command("delete")
+def delete_clock(task_id: int):
+    print("TODO")
+
+
+@task_clock_app.command("list")
+def task_clock_list(id: int | None = None, use_note_id: bool = False):
+    tasks = get_tasks_details()
+    if id:
+        task_id = get_task_id(id) if use_note_id else id
+        tasks = [i for i in tasks if i["id"] == task_id]
+    subset = [
+        {"task_id": s["id"], "clocks": s.get("clocks", [])} for s in tasks
+    ]
+    new_subset = []
+    for d in subset:
+        if clocks := d.get("clocks"):
+            for s in clocks:
+                s.update({"task_id": d["task_id"]})
+                new_subset.append(s)
+    # # print(json.dumps(new_subset, indent=2))
+    df = pl.DataFrame(new_subset)
+    cols = ["id", "task_id", "clock_in", "clock_out"]
+    df = df.select(cols)
+    print(df)
+    # print(json.dumps(new_subset, indent=2))
+
+
+@task_clock_app.command("create")
+def cli_task_clock_create(
+    task_id: int,
+    start_year: int,
+    start_month: int,
+    start_day: int,
+    start_hour: int,
+    start_minute: int,
+    end_year: int,
+    end_month: int,
+    end_day: int,
+    end_hour: int,
+    end_minute: int,
+):
+    start = make_iso_datetimestamp(
+        start_year, start_month, start_day, start_hour, start_minute
+    )
+    end = make_iso_datetimestamp(end_year, end_month, end_day, end_hour, end_minute)
+    response = create_task_clock(task_id, start, end)
+    print(response)
+
+
+@task_clock_app.command("out")
 def clock_out(task_id: int):
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -591,16 +650,22 @@ def add_parent(
     try:
         response = update_task_hierarchy(child_id, {"parent_id": parent_id})
         if response.get("success"):
-            typer.echo(f"Successfully added task {parent_id} as parent of task {child_id}.")
+            typer.echo(
+                f"Successfully added task {parent_id} as parent of task {child_id}."
+            )
         else:
-            typer.echo(f"Failed to add parent. Error: {response.get('error', 'Unknown error')}")
+            typer.echo(
+                f"Failed to add parent. Error: {response.get('error', 'Unknown error')}"
+            )
     except Exception as e:
         typer.echo(f"An error occurred: {str(e)}")
 
 
 @task_tree_app.command("remove_child")
 def remove_child(
-    child_id: int = typer.Argument(..., help="ID of the child task to remove from its parent")
+    child_id: int = typer.Argument(
+        ..., help="ID of the child task to remove from its parent"
+    ),
 ):
     """
     Remove a child task from its parent in the task hierarchy.
@@ -610,33 +675,80 @@ def remove_child(
         if response.get("success"):
             typer.echo(f"Successfully removed task {child_id} from its parent.")
         else:
-            typer.echo(f"Failed to remove child. Error: {response.get('error', 'Unknown error')}")
+            typer.echo(
+                f"Failed to remove child. Error: {response.get('error', 'Unknown error')}"
+            )
     except Exception as e:
         typer.echo(f"An error occurred: {str(e)}")
 
 
 # Task Schedule Commands
 task_app.add_typer(task_schedule_app, name="schedule")
+task_app.add_typer(task_clock_app, name="clocks")
+
+
+def make_iso_datetimestamp(year: int, month: int, day: int, hour: int, minute: int):
+    return f"{year}-{month}-{day}T{hour}:{minute}:00Z"
 
 
 @task_schedule_app.command("create")
-def schedule_create():
-    typer.echo("Creating task schedule...")
+def cli_schedule_create(
+    task_id: int,
+    start_year: int,
+    start_month: int,
+    start_day: int,
+    start_hour: int,
+    start_minute: int,
+    end_year: int,
+    end_month: int,
+    end_day: int,
+    end_hour: int,
+    end_minute: int,
+):
+    start = make_iso_datetimestamp(
+        start_year, start_month, start_day, start_hour, start_minute
+    )
+    end = make_iso_datetimestamp(end_year, end_month, end_day, end_hour, end_minute)
+    json_data = {"task_id": task_id, "start_datetime": start, "end_datetime": end}
+    response = create_task_schedule(json_data)
+    print(response)
+    # typer.echo(response)
 
 
 @task_schedule_app.command("update")
-def schedule_update():
-    typer.echo("Updating task schedule...")
+def cli_task_schedule_update(schedule_id: int, start_datetime: str, end_datetime: str):
+    response = update_task_schedule(
+        schedule_id, {"start_datetime": start_datetime, "end_datetime": end_datetime}
+    )
+    typer.echo(response)
 
 
 @task_schedule_app.command("delete")
-def schedule_delete():
-    typer.echo("Deleting task schedule...")
+def cli_task_schedule_delete(schedule_id: int):
+    response = delete_task_schedule(schedule_id)
+    typer.echo(response)
 
 
 @task_schedule_app.command("list")
-def schedule_list():
-    typer.echo("Listing task schedules...")
+def schedule_list(id: int | None = None, use_note_id: bool = False):
+    schedule_list = get_tasks_details()
+    if id:
+        task_id = get_task_id(id) if use_note_id else id
+        schedule_list = [i for i in schedule_list if i["id"] == task_id]
+    subset = [
+        {"task_id": s["id"], "schedules": s.get("schedules", [])} for s in schedule_list
+    ]
+    new_subset = []
+    for d in subset:
+        if schedules := d.get("schedules"):
+            for s in d["schedules"]:
+                s.update({"task_id": d["task_id"]})
+                new_subset.append(s)
+    # print(json.dumps(new_subset, indent=2))
+    df = pl.DataFrame(new_subset)
+    cols = ["id", "task_id", "start_datetime", "end_datetime"]
+    df = df.select(cols)
+    print(df)
 
 
 if __name__ == "__main__":
