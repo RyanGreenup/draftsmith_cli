@@ -175,8 +175,27 @@ def list_tags():
 
 
 @tags_app.command("assign")
-def assign_tag():
-    typer.echo("Assigning tag...")
+def assign_tag(note_id: int, tag_name: str):
+    # First, we need to create the tag if it doesn't exist
+    tags = get_tag_names()
+    if tag_name not in tags:
+        create_tag(tag_name)
+        typer.echo(f"Created new tag: {tag_name}")
+    
+    # Now, we need to get the tag_id
+    tags_with_notes = get_tags_with_notes()
+    tag_id = next((tag['id'] for tag in tags_with_notes if tag['name'] == tag_name), None)
+    
+    if tag_id is None:
+        typer.echo(f"Error: Unable to find or create tag {tag_name}")
+        return
+
+    # Assign the tag to the note
+    result = assign_tag_to_note(note_id, tag_id)
+    if result.get('success'):
+        typer.echo(f"Successfully assigned tag '{tag_name}' to note with ID {note_id}.")
+    else:
+        typer.echo(f"Failed to assign tag. Error: {result.get('error', 'Unknown error')}")
 
 
 @tags_app.command("rename")
