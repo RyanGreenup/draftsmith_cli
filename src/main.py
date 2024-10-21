@@ -357,35 +357,8 @@ def search(query: str, tags: List[str] = typer.Option([], "--tag", "-t")):
 
 # Task Commands
 @task_app.command("create")
-def create_task(
-    title: str,
-    description: str = "",
-    note_id: int = typer.Option(None, "--note-id", "-n"),
-    status: str = typer.Option("todo", "--status", "-s"),
-    effort_estimate: float = typer.Option(None, "--effort", "-e"),
-    deadline: str = typer.Option(None, "--deadline", "-d"),
-    priority: int = typer.Option(None, "--priority", "-p"),
-    all_day: bool = typer.Option(False, "--all-day", "-a"),
-):
-    task_data = {
-        "title": title,
-        "description": description,
-        "note_id": note_id,
-        "status": status,
-        "effort_estimate": effort_estimate,
-        "deadline": deadline,
-        "priority": priority,
-        "all_day": all_day
-    }
-    # Remove None values from the dictionary
-    task_data = {k: v for k, v in task_data.items() if v is not None}
-    
-    new_task = create_task(task_data)
-    if new_task:
-        typer.echo(f"Task created successfully with ID: {new_task['id']}")
-        df_print([new_task])
-    else:
-        typer.echo("Failed to create task.")
+def create_task(note_id: int):
+    print("TODO")
 
 
 @task_app.command("rename")
