@@ -9,6 +9,7 @@ from tasks import (
     get_tasks_details,
     get_tasks_tree,
     create_task_schedule,
+    update_task_schedule,
 )
 
 
@@ -186,6 +187,25 @@ def test_create_task_schedule():
     with requests_mock.Mocker() as m:
         m.post(f"{base_url}/task_schedules", json=expected_response)
         response = create_task_schedule(task_schedule_data, base_url)
+        assert response == expected_response
+
+
+def test_update_task_schedule():
+    base_url = "http://localhost:37238"
+    schedule_id = 1
+    update_data: Dict[str, str] = {
+        "start_datetime": "2022-06-02T10:00:00Z",
+        "end_datetime": "2022-06-02T18:00:00Z",
+    }
+
+    expected_response: Dict[str, Any] = {
+        "message": "Task schedule updated successfully"
+    }
+
+    with requests_mock.Mocker() as m:
+        # Mocking the response for updating the task schedule
+        m.put(f"{base_url}/task_schedules/{schedule_id}", json=expected_response)
+        response = update_task_schedule(schedule_id, update_data, base_url)
         assert response == expected_response
 
 

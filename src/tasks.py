@@ -179,3 +179,31 @@ def create_task_schedule(
     headers = {"Content-Type": "application/json"}
     response = requests.post(url, json=task_schedule_data, headers=headers)
     return response.json()
+
+
+def update_task_schedule(
+    schedule_id: int,
+    update_data: Dict[str, str],
+    base_url: str = "http://localhost:37238",
+) -> Dict[str, Any]:
+    """
+    Update the details of a task schedule by sending a PUT request.
+
+    Args:
+        schedule_id (int): The ID of the task schedule to update.
+        update_data (Dict[str, str]): A dictionary containing the data to update, e.g., {'start_datetime': '2022-06-02T10:00:00Z', 'end_datetime': '2022-06-02T18:00:00Z'}.
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        Dict[str, Any]: The response from the server as a JSON object.
+
+    Example:
+        >>> update_task_schedule(
+                1, {"start_datetime": "2022-06-02T10:00:00Z",
+                    "end_datetime": "2022-06-02T18:00:00Z"})
+        {"message": "Task schedule updated successfully"}
+    """
+    url = f"{base_url}/task_schedules/{schedule_id}"
+    headers = {"Content-Type": "application/json"}
+    response = requests.put(url, json=update_data, headers=headers)
+    return response.json()
