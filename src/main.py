@@ -261,8 +261,25 @@ def tree_list():
 
 
 @tags_tree_app.command("add_parent")
-def add_parent():
-    typer.echo("Adding parent tag...")
+def add_parent(child_tag: str, parent_tag: str):
+    tags = get_tag_names()
+    if child_tag not in tags or parent_tag not in tags:
+        typer.echo(f"Error: One or both tags do not exist.")
+        return
+
+    tags_with_notes = get_tags_with_notes()
+    child_id = next((tag['id'] for tag in tags_with_notes if tag['name'] == child_tag), None)
+    parent_id = next((tag['id'] for tag in tags_with_notes if tag['name'] == parent_tag), None)
+
+    if child_id is None or parent_id is None:
+        typer.echo(f"Error: Unable to find one or both tags.")
+        return
+
+    result = create_tag_hierarchy(parent_id, child_id)
+    if result.get('success'):
+        typer.echo(f"Successfully added tag '{parent_tag}' as parent of tag '{child_tag}'.")
+    else:
+        typer.echo(f"Failed to add parent tag. Error: {result.get('error', 'Unknown error')}")
 
 
 @tags_tree_app.command("remove_child")
