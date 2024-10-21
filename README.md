@@ -41,7 +41,7 @@ Install the backend API by following the [API Setup Guide](https://ryangreenup.g
 
 ## Usage
 
-- **CLI Commands**: The CLI commands are described through the `--help` flag. [^1729492544]
+- **CLI Commands**: The CLI commands are described through the `--help` flag.
 
   - `draftsmith --help`
   - `draftsmith notes --help`
@@ -88,7 +88,7 @@ Structured thinking is increasingly important now that LLM's are making informat
 ## Footnotes
 
 
-[^1729492544]:
+<!-- [^1729492544]:
     - `task`
         - `delete`
         - `list`
@@ -133,3 +133,4 @@ Structured thinking is increasingly important now that LLM's are making informat
             - `add_parent`
             - `remove_child`
             - `list`
+ -->
