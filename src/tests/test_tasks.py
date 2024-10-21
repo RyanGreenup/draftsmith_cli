@@ -12,6 +12,7 @@ from tasks import (
     update_task_schedule,
     delete_task_schedule,
     create_task_clock,
+    update_task_clock,
 )
 
 
@@ -239,6 +240,24 @@ def test_create_task_clock():
     with requests_mock.Mocker() as m:
         m.post(f"{base_url}/task_clocks", json=expected_response)
         response = create_task_clock(task_id, clock_in, clock_out, base_url)
+        assert response == expected_response
+
+
+def test_update_task_clock():
+    base_url = "http://localhost:8080"
+    task_clock_id = 1
+    update_data: Dict[str, str] = {
+        "clock_in": "2023-05-20T09:00:00Z",
+        "clock_out": "2023-05-20T17:00:00Z",
+    }
+    expected_response: Dict[str, Any] = {
+        "message": "Task clock entry updated successfully"
+    }
+
+    with requests_mock.Mocker() as m:
+        # Mocking the response for updating the task clock
+        m.put(f"{base_url}/task_clocks/{task_clock_id}", json=expected_response)
+        response = update_task_clock(task_clock_id, update_data, base_url)
         assert response == expected_response
 
 

@@ -263,3 +263,31 @@ def create_task_clock(
     response = requests.post(url, json=data, headers=headers)
     response.raise_for_status()  # Raise an error if the response is not successful
     return response.json()
+
+
+def update_task_clock(
+    task_clock_id: int,
+    update_data: Dict[str, str],
+    base_url: str = "http://localhost:8080",
+) -> Dict[str, Any]:
+    """
+    Update a task clock entry by sending a PUT request.
+
+    Args:
+        task_clock_id (int): The ID of the task clock to update.
+        update_data (Dict[str, str]): A dictionary containing the data to update,
+                                       e.g., {'clock_in': '2023-05-20T09:00:00Z', 'clock_out': '2023-05-20T17:00:00Z'}.
+        base_url (str): The base URL of the API (default: "http://localhost:8080").
+
+    Returns:
+        Dict[str, Any]: The response from the server as a JSON object.
+
+    Example:
+        >>> update_task_clock(
+                1, {"clock_in": "2023-05-20T09:00:00Z", "clock_out": "2023-05-20T17:00:00Z"})
+        {"message": "Task clock entry updated successfully"}
+    """
+    url = f"{base_url}/task_clocks/{task_clock_id}"
+    headers = {"Content-Type": "application/json"}
+    response = requests.put(url, json=update_data, headers=headers)
+    return response.json()
