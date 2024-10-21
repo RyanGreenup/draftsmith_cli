@@ -382,8 +382,27 @@ def rename(task_id: int, new_title: str):
 
 
 @task_app.command("update")
-def update():
-    typer.echo("Updating task...")
+def update(task_id: int, title: str = None, description: str = None, due_date: str = None, priority: int = None):
+    update_data = {}
+    if title is not None:
+        update_data["title"] = title
+    if description is not None:
+        update_data["description"] = description
+    if due_date is not None:
+        update_data["due_date"] = due_date
+    if priority is not None:
+        update_data["priority"] = priority
+
+    if not update_data:
+        typer.echo("No update data provided. Task remains unchanged.")
+        return
+
+    updated_task = update_task(task_id, update_data)
+    if updated_task:
+        typer.echo(f"Task {task_id} updated successfully.")
+        df_print([updated_task])
+    else:
+        typer.echo(f"Failed to update task {task_id}.")
 
 
 @task_app.command("delete")
