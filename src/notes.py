@@ -2,6 +2,7 @@ import requests
 from typing import Dict, Any, List
 from urllib.parse import quote
 
+
 # POST
 def create_note(url: str, note_data: Dict[str, str]) -> Dict[str, Any]:
     """
@@ -30,7 +31,10 @@ def create_note(url: str, note_data: Dict[str, str]) -> Dict[str, Any]:
 
 # PUT
 
-def update_note(note_id: int, update_data: Dict[str, str], base_url: str = "http://localhost:37238") -> Dict[str, Any]:
+
+def update_note(
+    note_id: int, update_data: Dict[str, str], base_url: str = "http://localhost:37238"
+) -> Dict[str, Any]:
     """
     Update the details of a note by sending a PUT request.
 
@@ -55,7 +59,10 @@ def update_note(note_id: int, update_data: Dict[str, str], base_url: str = "http
 
 # DELETE
 
-def delete_note(note_id: int, base_url: str = "http://localhost:37238") -> Dict[str, str]:
+
+def delete_note(
+    note_id: int, base_url: str = "http://localhost:37238"
+) -> Dict[str, str]:
     """
     Delete a note by sending a DELETE request.
 
@@ -113,7 +120,9 @@ def get_notes(base_url: str = "http://localhost:37238") -> List[Dict[str, Any]]:
     return response.json()
 
 
-def get_notes_no_content(base_url: str = "http://localhost:37238") -> List[Dict[str, Any]]:
+def get_notes_no_content(
+    base_url: str = "http://localhost:37238",
+) -> List[Dict[str, Any]]:
     """
     Retrieve notes without content by sending a GET request.
 
@@ -141,7 +150,9 @@ def get_notes_no_content(base_url: str = "http://localhost:37238") -> List[Dict[
     return response.json()
 
 
-def search_notes(query: str, base_url: str = "http://localhost:37238") -> List[Dict[str, Any]]:
+def search_notes(
+    query: str, base_url: str = "http://localhost:37238"
+) -> List[Dict[str, Any]]:
     """
     Search for notes based on a query string by sending a GET request.
 
