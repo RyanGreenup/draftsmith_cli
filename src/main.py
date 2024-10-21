@@ -165,7 +165,13 @@ def remove_child(child_id: int):
 # Tags Commands
 @tags_app.command("list")
 def list_tags():
-    typer.echo("Listing all tags...")
+    tags = get_tag_names()
+    if tags:
+        typer.echo("List of all tags:")
+        for tag in tags:
+            typer.echo(f"- {tag}")
+    else:
+        typer.echo("No tags found or unable to retrieve tags.")
 
 
 @tags_app.command("assign")
