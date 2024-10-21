@@ -2,7 +2,13 @@ import pytest
 import requests_mock
 from typing import Dict, Any, List
 from urllib.parse import quote
-from tasks import create_task, update_task, delete_task, get_tasks_details
+from tasks import (
+    create_task,
+    update_task,
+    delete_task,
+    get_tasks_details,
+    get_tasks_tree,
+)
 
 
 def test_create_task():
@@ -136,6 +142,30 @@ def test_get_tasks_details():
     with requests_mock.Mocker() as m:
         m.get(f"{base_url}/tasks/details", json=expected_response)
         response = get_tasks_details(base_url)
+        assert response == expected_response
+
+
+def test_get_tasks_tree():
+    base_url = "http://localhost:37238"
+    expected_response = [
+        {
+            "id": 1,
+            "title": "First note",
+            "type": "",
+            "children": [
+                {
+                    "id": 2,
+                    "title": "Second note",
+                    "type": "block",
+                    "children": [{"id": 3, "title": "Third note", "type": "subpage"}],
+                }
+            ],
+        }
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.get(f"{base_url}/tasks/tree", json=expected_response)
+        response = get_tasks_tree(base_url)
         assert response == expected_response
 
 

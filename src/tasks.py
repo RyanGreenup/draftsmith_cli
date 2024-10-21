@@ -111,3 +111,43 @@ def get_tasks_details(base_url: str = "http://localhost:37238") -> List[Dict[str
     response = requests.get(url)
     response.raise_for_status()  # Raise an exception for HTTP errors
     return response.json()
+
+
+def get_tasks_tree(base_url: str = "http://localhost:37238") -> List[Dict[str, Any]]:
+    """
+    Retrieve the hierarchical structure of tasks by sending a GET request to the specified endpoint.
+
+    Args:
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        List[Dict[str, Any]]: A tree structure of tasks as a list of JSON objects.
+
+    Example:
+        >>> get_tasks_tree()
+        [
+            {
+                "id": 1,
+                "title": "First note",
+                "type": "",
+                "children": [
+                    {
+                        "id": 2,
+                        "title": "Second note",
+                        "type": "block",
+                        "children": [
+                            {
+                                "id": 3,
+                                "title": "Third note",
+                                "type": "subpage"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    """
+    url = f"{base_url}/tasks/tree"
+    response = requests.get(url)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+    return response.json()
