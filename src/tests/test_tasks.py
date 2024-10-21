@@ -2,7 +2,7 @@ import pytest
 import requests_mock
 from typing import Dict, Any, List
 from urllib.parse import quote
-from tasks import create_task, update_task
+from tasks import create_task, update_task, delete_task
 
 
 def test_create_task():
@@ -67,3 +67,15 @@ def test_update_task():
         m.put(f"{base_url}/tasks/{task_id}", json=expected_response_other)
         response_other = update_task(task_id, update_data_other, base_url)
         assert response_other == expected_response_other
+
+
+def test_delete_task():
+    base_url = "http://localhost:37238"
+    task_id = 1
+
+    expected_response: Dict[str, str] = {"message": "Task deleted successfully"}
+
+    with requests_mock.Mocker() as m:
+        m.delete(f"{base_url}/tasks/{task_id}", json=expected_response)
+        response = delete_task(task_id, base_url)
+        assert response == expected_response

@@ -60,3 +60,26 @@ def update_task(
     response = requests.put(url, json=update_data, headers=headers)
     response.raise_for_status()  # Raise an exception for HTTP errors
     return response.json()
+
+
+def delete_task(
+    task_id: int, base_url: str = "http://localhost:37238"
+) -> Dict[str, str]:
+    """
+    Delete a task by sending a DELETE request to the specified endpoint.
+
+    Args:
+        task_id (int): The ID of the task to delete.
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        Dict[str, str]: The response from the server as a JSON object.
+
+    Example:
+        >>> delete_task(1)
+        {"message": "Task deleted successfully"}
+    """
+    url = f"{base_url}/tasks/{task_id}"
+    response = requests.delete(url)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+    return response.json()
