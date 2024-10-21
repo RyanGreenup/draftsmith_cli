@@ -362,14 +362,16 @@ def create_task_cli(
     note_id: int,
     title: str = typer.Option(None, "--title", "-t"),
     description: str = typer.Option(None, "--description", "-d"),
-    priority: int = typer.Option(5, "--priority", "-p")
+    priority: int = typer.Option(None, "--priority", "-p"),
+    goal_relationship: int = typer.Option(3, "--goal-relationship", "-g", min=1, max=5)
 ):
     task_data = {
         "note_id": note_id,
         "status": "todo",
         "title": title,
         "description": description,
-        "priority": priority
+        "priority": priority,
+        "goal_relationship": goal_relationship
     }
     # Remove None values
     task_data = {k: v for k, v in task_data.items() if v is not None}
