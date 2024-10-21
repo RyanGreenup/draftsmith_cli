@@ -165,14 +165,13 @@ def remove_child(child_id: int):
 
 # Tags Commands
 @tags_app.command("list")
-def list_tags():
-    tags = get_tag_names()
-    if tags:
-        typer.echo("List of all tags:")
-        for tag in tags:
-            typer.echo(f"- {tag}")
+def list_tags(df: bool = DF_PRINT):
+    tags = list_tags_with_notes()
+    if df:
+        df = pl.DataFrame(tags).select(['id', 'name', 'notes'])
+        df_print(df)
     else:
-        typer.echo("No tags found or unable to retrieve tags.")
+        print(json.dumps(tags, indent=2))
 
 
 @tags_app.command("assign")
@@ -182,21 +181,22 @@ def assign_tag(note_id: int, tag_name: str):
     if tag_name not in tags:
         create_tag(tag_name)
         typer.echo(f"Created new tag: {tag_name}")
-    
+
     # Now, we need to get the tag_id
     tags_with_notes = get_tags_with_notes()
-    tag_id = next((tag['id'] for tag in tags_with_notes if tag['name'] == tag_name), None)
-    
+    tag_id = next((tag['tag_id'] for tag in tags_with_notes if tag['tag_name'] == tag_name), None)
+
     if tag_id is None:
         typer.echo(f"Error: Unable to find or create tag {tag_name}")
         return
 
     # Assign the tag to the note
     result = assign_tag_to_note(note_id, tag_id)
-    if result.get('success'):
-        typer.echo(f"Successfully assigned tag '{tag_name}' to note with ID {note_id}.")
-    else:
-        typer.echo(f"Failed to assign tag. Error: {result.get('error', 'Unknown error')}")
+    print(result)
+    # if result.get('success'):
+    #     typer.echo(f"Successfully assigned tag '{tag_name}' to note with ID {note_id}.")
+    # else:
+    #     typer.echo(f"Failed to assign tag. Error: {result.get('error', 'Unknown error')}")
 
 
 @tags_app.command("rename")
@@ -308,7 +308,7 @@ def remove_child(child_tag: str):
 def filter(tag_name: str):
     tags_with_notes = get_tags_with_notes()
     filtered_tag = next((tag for tag in tags_with_notes if tag['name'] == tag_name), None)
-    
+
     if filtered_tag is None:
         typer.echo(f"Error: Tag '{tag_name}' not found.")
         return
