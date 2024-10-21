@@ -116,8 +116,12 @@ def create(title: str, content: str):
 
 
 @notes_app.command("delete")
-def delete():
-    typer.echo("Deleting note...")
+def delete(id: int):
+    result = delete_note(id)
+    if result.get('success'):
+        typer.echo(f"Note with ID {id} has been successfully deleted.")
+    else:
+        typer.echo(f"Failed to delete note with ID {id}. Error: {result.get('error', 'Unknown error')}")
 
 
 # Notes Tree Commands
