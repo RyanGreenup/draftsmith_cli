@@ -8,6 +8,7 @@ from tags import (
     update_tag,
     delete_tag,
     get_tags_with_notes,
+    get_tag_names,
 )
 
 
@@ -22,29 +23,27 @@ def test_create_tag():
         assert response == expected_response
 
 
-def assign_tag_to_note(
-    note_id: int, tag_id: int, base_url: str = "http://localhost:37238"
-) -> Dict[str, Any]:
-    """
-    Assign a tag to a note by sending a POST request.
+def test_assign_tag_to_note():
+    base_url = "http://localhost:37238"
+    note_id = 2
+    tag_id = 3
+    expected_response: Dict[str, Any] = {
+        "note_id": note_id,
+        "tag_id": tag_id,
+        "message": "Tag assigned successfully",
+    }
 
-    Args:
-        note_id (int): The ID of the note to which the tag should be assigned.
-        tag_id (int): The ID of the tag to assign.
-        base_url (str): The base URL of the API (default: "http://localhost:37238").
+    with requests_mock.Mocker() as m:
+        url = f"{base_url}/notes/{note_id}/tags"
 
-    Returns:
-        Dict[str, Any]: The response from the server as a JSON object.
+        # Mock the POST request to simulate the expected API response
+        m.post(url, json=expected_response)
 
-    Example:
-        >>> assign_tag_to_note(2, 3)
-        {"note_id": 2, "tag_id": 3, "message": "Tag assigned successfully"}
-    """
-    url = f"{base_url}/notes/{note_id}/tags"
-    headers = {"Content-Type": "application/json"}
-    tag_data = {"tag_id": tag_id}
-    response = requests.post(url, json=tag_data, headers=headers)
-    return response.json()
+        # Call the function with test data
+        response = assign_tag_to_note(note_id, tag_id, base_url)
+
+        # Assert that the response from the function matches the expected response
+        assert response == expected_response
 
 
 def test_update_tag():
@@ -84,6 +83,23 @@ def test_get_tags_with_notes():
         m.get(f"{base_url}/tags/with-notes", json=expected_response)
         response = get_tags_with_notes(base_url)
         assert response == expected_response
+
+
+def test_get_tag_names():
+    base_url = "http://localhost:37238"
+    expected_response = [
+        {"id": 4, "name": "done"},
+        {"id": 1, "name": "important"},
+        {"id": 5, "name": "important"},
+        {"id": 3, "name": "todo"},
+        {"id": 2, "name": "urgent"},
+    ]
+    expected_tag_names: List[str] = ["done", "important", "important", "todo", "urgent"]
+
+    with requests_mock.Mocker() as m:
+        m.get(f"{base_url}/tags", json=expected_response)
+        tag_names = get_tag_names(base_url)
+        assert tag_names == expected_tag_names
 
 
 if __name__ == "__main__":

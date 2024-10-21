@@ -152,3 +152,26 @@ def get_tags_with_notes(
     url = f"{base_url}/tags/with-notes"
     response = requests.get(url)
     return response.json()
+
+
+def get_tag_names(base_url: str = "http://localhost:37238") -> List[str]:
+    """
+    Get a list of tag names from the API.
+
+    Args:
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        List[str]: A list containing the names of all the tags.
+
+    Example:
+        >>> get_tag_names()
+        ["done", "important", "important", "todo", "urgent"]
+    """
+    url = f"{base_url}/tags"
+    response = requests.get(url)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+    tags = response.json()
+
+    # Extract the 'name' from each tag into a list
+    return [tag["name"] for tag in tags]
