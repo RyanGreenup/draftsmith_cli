@@ -8,6 +8,7 @@ from notes import (
     get_notes,
     get_notes_no_content,
     search_notes,
+    create_note_hierarchy,
 )
 from urllib.parse import quote
 
@@ -160,6 +161,22 @@ def test_search_notes():
         encoded_query = quote(query)
         m.get(f"{base_url}/notes/search?q={encoded_query}", json=expected_response)
         response = search_notes(query, base_url)
+        assert response == expected_response
+
+
+def test_create_note_hierarchy():
+    base_url = "http://localhost:37238"
+    hierarchy_data = {
+        "parent_note_id": 1,
+        "child_note_id": 2,
+        "hierarchy_type": "subpage",
+    }
+    expected_response = {"id": 2, "message": "Note hierarchy entry added successfully"}
+
+    with requests_mock.Mocker() as m:
+        m.post(f"{base_url}/notes/hierarchy", json=expected_response)
+
+        response = create_note_hierarchy(hierarchy_data, base_url)
         assert response == expected_response
 
 

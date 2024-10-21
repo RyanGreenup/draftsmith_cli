@@ -172,3 +172,29 @@ def search_notes(
     response = requests.get(url)
     response.raise_for_status()  # Raise an error for bad responses
     return response.json()
+
+
+def create_note_hierarchy(
+    hierarchy_data: Dict[str, int], base_url: str = "http://localhost:37238"
+) -> Dict[str, Any]:
+    """
+    Create a note hierarchy entry by sending a POST request.
+
+    Args:
+        hierarchy_data (Dict[str, int]): A dictionary containing 'parent_note_id', 'child_note_id',
+                                         and 'hierarchy_type' keys.
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        Dict[str, Any]: The response from the server as a JSON object.
+
+    Example:
+        >>> create_note_hierarchy(
+                {"parent_note_id": 1, "child_note_id": 2, "hierarchy_type": "subpage"})
+        {"id": 2, "message": "Note hierarchy entry added successfully"}
+    """
+    url = f"{base_url}/notes/hierarchy"
+    headers = {"Content-Type": "application/json"}
+    response = requests.post(url, json=hierarchy_data, headers=headers)
+    response.raise_for_status()
+    return response.json()
