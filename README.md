@@ -31,10 +31,10 @@ Install the backend API by following the [API Setup Guide](https://ryangreenup.g
 
 2. **CLI Client**
    - Install Python and dependencies.
-       - `pipx install --force  https://github.com/RyanGreenup/draftsmith_cli`
+       - `pipx install git+https://github.com/RyanGreenup/draftsmith_cli --force`
 
 3. [**PyQt GUI**](https://github.com/RyanGreenup/draftsmith)
-   - `pipx install https://github.com/RyanGreenup/draftsmith`
+   - `pipx install git+https://github.com/RyanGreenup/draftsmith`
 
 4. **Web UI (Flask)**
    - To Be Implemented
