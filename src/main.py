@@ -28,6 +28,7 @@ from tasks import (
     create_task_clock,
     update_task_clock,
     delete_task_clock,
+    get_task_clocks,
 )
 from tags import (
     create_tag,
@@ -447,8 +448,29 @@ def clock_in(task_id: int):
 
 
 @task_app.command("clock_out")
-def clock_out():
-    typer.echo("Clocking out task...")
+def clock_out(task_id: int):
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Get the latest clock entry for the task
+    task_clocks = get_task_clocks(task_id)
+    if not task_clocks:
+        typer.echo(f"No active clock found for task ID {task_id}")
+        return
+
+    latest_clock = task_clocks[-1]
+    if latest_clock['clock_out']:
+        typer.echo(f"Task ID {task_id} is not currently clocked in")
+        return
+
+    # Update the clock entry with the clock-out time
+    updated_clock = update_task_clock(latest_clock['id'], {"clock_out": current_time})
+    if updated_clock:
+        duration = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S") - datetime.strptime(latest_clock['clock_in'], "%Y-%m-%d %H:%M:%S")
+        typer.echo(f"Clocked out for task ID {task_id} at {current_time}")
+        typer.echo(f"Duration: {duration}")
+        df_print([updated_clock])
+    else:
+        typer.echo(f"Failed to clock out for task ID {task_id}")
 
 
 # Task Tree Commands
