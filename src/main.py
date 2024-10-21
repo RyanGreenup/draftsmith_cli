@@ -154,8 +154,12 @@ def add_parent(child_id: int, parent_id: int):
 
 
 @notes_tree_app.command("remove_child")
-def remove_child():
-    typer.echo("Removing child from note...")
+def remove_child(child_id: int):
+    result = delete_note_hierarchy(child_id)
+    if result.get('success'):
+        typer.echo(f"Successfully removed note {child_id} from its parent.")
+    else:
+        typer.echo(f"Failed to remove note from parent. Error: {result.get('error', 'Unknown error')}")
 
 
 # Tags Commands
