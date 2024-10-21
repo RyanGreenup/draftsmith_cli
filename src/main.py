@@ -199,8 +199,24 @@ def assign_tag(note_id: int, tag_name: str):
 
 
 @tags_app.command("rename")
-def rename():
-    typer.echo("Renaming tag...")
+def rename(old_name: str, new_name: str):
+    tags = get_tag_names()
+    if old_name not in tags:
+        typer.echo(f"Error: Tag '{old_name}' does not exist.")
+        return
+
+    tags_with_notes = get_tags_with_notes()
+    tag_id = next((tag['id'] for tag in tags_with_notes if tag['name'] == old_name), None)
+
+    if tag_id is None:
+        typer.echo(f"Error: Unable to find tag '{old_name}'")
+        return
+
+    result = update_tag(tag_id, new_name)
+    if result.get('success'):
+        typer.echo(f"Successfully renamed tag '{old_name}' to '{new_name}'.")
+    else:
+        typer.echo(f"Failed to rename tag. Error: {result.get('error', 'Unknown error')}")
 
 
 @tags_app.command("delete")
