@@ -313,3 +313,22 @@ def delete_task_clock(
     url = f"{base_url}/task_clocks/{task_clock_id}"
     response = requests.delete(url)
     return response.json()
+
+def get_task_clocks(task_id: int, base_url: str = "http://localhost:37238") -> List[Dict[str, Any]]:
+    """
+    Retrieve clock entries for a specific task.
+
+    Args:
+        task_id (int): The ID of the task to get clock entries for.
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        List[Dict[str, Any]]: A list of clock entries for the specified task.
+    """
+    tasks_details = get_tasks_details(base_url)
+    
+    for task in tasks_details:
+        if task['id'] == task_id:
+            return task.get('clocks', [])
+    
+    return []
