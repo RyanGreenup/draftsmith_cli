@@ -246,7 +246,18 @@ tags_app.add_typer(tags_tree_app, name="tree")
 
 @tags_tree_app.command("list")
 def tree_list():
-    typer.echo("Listing tags in tree structure...")
+    tags_tree = list_tags_with_notes()
+    if tags_tree:
+        def print_tree(node, level=0):
+            prefix = "  " * level
+            typer.echo(f"{prefix}├─ {node['name']} (ID: {node['id']})")
+            for child in node.get('children', []):
+                print_tree(child, level + 1)
+
+        for root_tag in tags_tree:
+            print_tree(root_tag)
+    else:
+        typer.echo("No tags found or unable to retrieve the tags tree.")
 
 
 @tags_tree_app.command("add_parent")
