@@ -2,7 +2,7 @@ import pytest
 import requests_mock
 from typing import Dict, Any, List
 from urllib.parse import quote
-from tasks import create_task, update_task, delete_task
+from tasks import create_task, update_task, delete_task, get_tasks_details
 
 
 def test_create_task():
@@ -79,3 +79,65 @@ def test_delete_task():
         m.delete(f"{base_url}/tasks/{task_id}", json=expected_response)
         response = delete_task(task_id, base_url)
         assert response == expected_response
+
+
+def test_get_tasks_details():
+    base_url = "http://localhost:37238"
+    expected_response = [
+        {
+            "id": 2,
+            "note_id": 1,
+            "status": "todo",
+            "effort_estimate": 2.5,
+            "actual_effort": 0,
+            "deadline": "2023-06-30T15:00:00Z",
+            "priority": 3,
+            "all_day": False,
+            "goal_relationship": 4,
+            "created_at": "2024-10-20T10:31:58.269465Z",
+            "modified_at": "2024-10-20T10:31:58.269465Z",
+            "schedules": [
+                {
+                    "id": 1,
+                    "start_datetime": "2023-06-01T09:00:00Z",
+                    "end_datetime": "2023-06-01T17:00:00Z",
+                }
+            ],
+            "clocks": None,
+        },
+        {
+            "id": 7,
+            "note_id": 4,
+            "status": "todo",
+            "effort_estimate": 2.5,
+            "actual_effort": 0,
+            "deadline": "2023-06-30T15:00:00Z",
+            "priority": 3,
+            "all_day": False,
+            "goal_relationship": 4,
+            "created_at": "2024-10-20T10:33:04.594991Z",
+            "modified_at": "2024-10-20T10:33:04.594991Z",
+            "schedules": None,
+            "clocks": [
+                {
+                    "id": 1,
+                    "clock_in": "2023-06-01T09:00:00Z",
+                    "clock_out": "2023-06-01T17:00:00Z",
+                },
+                {
+                    "id": 2,
+                    "clock_in": "2024-05-01T09:00:00Z",
+                    "clock_out": "2024-05-01T17:00:00Z",
+                },
+            ],
+        },
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.get(f"{base_url}/tasks/details", json=expected_response)
+        response = get_tasks_details(base_url)
+        assert response == expected_response
+
+
+if __name__ == "__main__":
+    pytest.main()

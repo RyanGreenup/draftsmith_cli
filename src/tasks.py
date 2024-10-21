@@ -83,3 +83,31 @@ def delete_task(
     response = requests.delete(url)
     response.raise_for_status()  # Raise an exception for HTTP errors
     return response.json()
+
+
+def get_tasks_details(base_url: str = "http://localhost:37238") -> List[Dict[str, Any]]:
+    """
+    Retrieve the details of all tasks by sending a GET request to the specified endpoint.
+
+    Args:
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        List[Dict[str, Any]]: A list of task details as a JSON object.
+
+    Example:
+        >>> get_tasks_details()
+        [
+            {
+                "id": 2,
+                "note_id": 1,
+                "status": "todo",
+                ...
+            },
+            ...
+        ]
+    """
+    url = f"{base_url}/tasks/details"
+    response = requests.get(url)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+    return response.json()
