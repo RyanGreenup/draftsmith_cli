@@ -283,8 +283,24 @@ def add_parent(child_tag: str, parent_tag: str):
 
 
 @tags_tree_app.command("remove_child")
-def remove_child():
-    typer.echo("Removing child tag...")
+def remove_child(child_tag: str):
+    tags = get_tag_names()
+    if child_tag not in tags:
+        typer.echo(f"Error: Tag '{child_tag}' does not exist.")
+        return
+
+    tags_with_notes = get_tags_with_notes()
+    child_id = next((tag['id'] for tag in tags_with_notes if tag['name'] == child_tag), None)
+
+    if child_id is None:
+        typer.echo(f"Error: Unable to find tag '{child_tag}'")
+        return
+
+    result = delete_tag_hierarchy_entry(child_id)
+    if result.get('success'):
+        typer.echo(f"Successfully removed tag '{child_tag}' from its parent.")
+    else:
+        typer.echo(f"Failed to remove tag from parent. Error: {result.get('error', 'Unknown error')}")
 
 
 @tags_app.command("filter")
