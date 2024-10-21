@@ -10,6 +10,7 @@ from tags import (
     get_tags_with_notes,
     get_tag_names,
     create_tag_hierarchy,
+    update_tag_hierarchy,
 )
 
 
@@ -114,6 +115,20 @@ def test_create_tag_hierarchy():
     with requests_mock.Mocker() as m:
         m.post(f"{base_url}/tags/hierarchy", json=expected_response)
         response = create_tag_hierarchy(parent_tag_id, child_tag_id, base_url)
+        assert response == expected_response
+
+
+def test_update_tag_hierarchy():
+    base_url = "http://localhost:37238"
+    tag_id = 5
+    parent_tag_id = 4
+    expected_response: Dict[str, Any] = {
+        "message": "Tag hierarchy entry updated successfully"
+    }
+
+    with requests_mock.Mocker() as m:
+        m.put(f"{base_url}/tags/hierarchy/{tag_id}", json=expected_response)
+        response = update_tag_hierarchy(tag_id, parent_tag_id, base_url)
         assert response == expected_response
 
 

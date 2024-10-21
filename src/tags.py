@@ -200,3 +200,28 @@ def create_tag_hierarchy(
     hierarchy_data = {"parent_tag_id": parent_tag_id, "child_tag_id": child_tag_id}
     response = requests.post(url, json=hierarchy_data, headers=headers)
     return response.json()
+
+
+def update_tag_hierarchy(
+    tag_id: int, parent_tag_id: int, base_url: str = "http://localhost:37238"
+) -> Dict[str, Any]:
+    """
+    Update the hierarchy of a tag by sending a PUT request.
+
+    Args:
+        tag_id (int): The ID of the tag to update.
+        parent_tag_id (int): The ID of the parent tag to associate.
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        Dict[str, Any]: The response from the server as a JSON object.
+
+    Example:
+        >>> update_tag_hierarchy(5, 4)
+        {"message": "Tag hierarchy entry updated successfully"}
+    """
+    url = f"{base_url}/tags/hierarchy/{tag_id}"
+    headers = {"Content-Type": "application/json"}
+    hierarchy_data = {"parent_tag_id": parent_tag_id}
+    response = requests.put(url, json=hierarchy_data, headers=headers)
+    return response.json()
