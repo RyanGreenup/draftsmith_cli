@@ -415,8 +415,18 @@ def delete(task_id: int):
 
 
 @task_app.command("schedule")
-def schedule():
-    typer.echo("Scheduling task...")
+def schedule(task_id: int, schedule_type: str, schedule_value: str):
+    schedule_data = {
+        "task_id": task_id,
+        "schedule_type": schedule_type,
+        "schedule_value": schedule_value
+    }
+    new_schedule = create_task_schedule(schedule_data)
+    if new_schedule:
+        typer.echo(f"Schedule created successfully for task ID: {task_id}")
+        df_print([new_schedule])
+    else:
+        typer.echo("Failed to create schedule.")
 
 
 @task_app.command("clock_in")
