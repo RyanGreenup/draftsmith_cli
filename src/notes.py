@@ -247,3 +247,51 @@ def delete_note_hierarchy(
     url = f"{base_url}/notes/hierarchy/{note_id}"
     response = requests.delete(url)
     return response.json()
+
+
+def get_notes_tree(base_url: str = "http://localhost:37238") -> List[Dict[str, Any]]:
+    """
+    Retrieve the notes tree by sending a GET request.
+
+    Args:
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        List[Dict[str, Any]]: The response from the server, representing the notes tree.
+
+    Example:
+        >>> get_notes_tree()
+        [
+          {
+            "id": 3,
+            "title": "Foo",
+            "type": ""
+          },
+          {
+            "id": 4,
+            "title": "New Note Title",
+            "type": ""
+          },
+          {
+            "id": 1,
+            "title": "First note",
+            "type": "",
+            "children": [
+              {
+                "id": 2,
+                "title": "Foo",
+                "type": "subpage"
+              },
+              {
+                "id": 2,
+                "title": "Foo",
+                "type": "subpage"
+              }
+            ]
+          }
+        ]
+    """
+    url = f"{base_url}/notes/tree"
+    response = requests.get(url)
+    response.raise_for_status()  # Raise an error for bad responses
+    return response.json()

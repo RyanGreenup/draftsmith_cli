@@ -11,6 +11,7 @@ from notes import (
     create_note_hierarchy,
     update_note_hierarchy,
     delete_note_hierarchy,
+    get_notes_tree,
 )
 from urllib.parse import quote
 
@@ -207,6 +208,28 @@ def test_delete_note_hierarchy():
         m.delete(f"{base_url}/notes/hierarchy/{note_id}", json=expected_response)
 
         response = delete_note_hierarchy(note_id, base_url)
+        assert response == expected_response
+
+
+def test_get_notes_tree():
+    base_url = "http://localhost:37238"
+    expected_response: List[Dict[str, Any]] = [
+        {"id": 3, "title": "Foo", "type": ""},
+        {"id": 4, "title": "New Note Title", "type": ""},
+        {
+            "id": 1,
+            "title": "First note",
+            "type": "",
+            "children": [
+                {"id": 2, "title": "Foo", "type": "subpage"},
+                {"id": 2, "title": "Foo", "type": "subpage"},
+            ],
+        },
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.get(f"{base_url}/notes/tree", json=expected_response)
+        response = get_notes_tree(base_url)
         assert response == expected_response
 
 
