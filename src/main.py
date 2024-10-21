@@ -304,8 +304,17 @@ def remove_child(child_tag: str):
 
 
 @tags_app.command("filter")
-def filter():
-    typer.echo("Filtering tags...")
+def filter(tag_name: str):
+    tags_with_notes = get_tags_with_notes()
+    filtered_tag = next((tag for tag in tags_with_notes if tag['name'] == tag_name), None)
+    
+    if filtered_tag is None:
+        typer.echo(f"Error: Tag '{tag_name}' not found.")
+        return
+
+    typer.echo(f"Notes tagged with '{tag_name}':")
+    for note in filtered_tag.get('notes', []):
+        typer.echo(f"- {note['title']} (ID: {note['id']})")
 
 
 @tags_app.command("search")
