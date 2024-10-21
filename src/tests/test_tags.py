@@ -9,6 +9,7 @@ from tags import (
     delete_tag,
     get_tags_with_notes,
     get_tag_names,
+    create_tag_hierarchy,
 )
 
 
@@ -100,6 +101,20 @@ def test_get_tag_names():
         m.get(f"{base_url}/tags", json=expected_response)
         tag_names = get_tag_names(base_url)
         assert tag_names == expected_tag_names
+
+
+def test_create_tag_hierarchy():
+    base_url = "http://localhost:37238"
+    parent_tag_id = 10
+    child_tag_id = 5
+    expected_response: Dict[str, Any] = {
+        "message": "Tag hierarchy entry added successfully"
+    }
+
+    with requests_mock.Mocker() as m:
+        m.post(f"{base_url}/tags/hierarchy", json=expected_response)
+        response = create_tag_hierarchy(parent_tag_id, child_tag_id, base_url)
+        assert response == expected_response
 
 
 if __name__ == "__main__":

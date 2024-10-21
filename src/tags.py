@@ -175,3 +175,28 @@ def get_tag_names(base_url: str = "http://localhost:37238") -> List[str]:
 
     # Extract the 'name' from each tag into a list
     return [tag["name"] for tag in tags]
+
+
+def create_tag_hierarchy(
+    parent_tag_id: int, child_tag_id: int, base_url: str = "http://localhost:37238"
+) -> Dict[str, Any]:
+    """
+    Create a tag hierarchy by sending a POST request.
+
+    Args:
+        parent_tag_id (int): The ID of the parent tag.
+        child_tag_id (int): The ID of the child tag.
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        Dict[str, Any]: The response from the server as a JSON object.
+
+    Example:
+        >>> create_tag_hierarchy(10, 5)
+        {"message": "Tag hierarchy entry added successfully"}
+    """
+    url = f"{base_url}/tags/hierarchy"
+    headers = {"Content-Type": "application/json"}
+    hierarchy_data = {"parent_tag_id": parent_tag_id, "child_tag_id": child_tag_id}
+    response = requests.post(url, json=hierarchy_data, headers=headers)
+    return response.json()
