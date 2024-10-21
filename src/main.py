@@ -371,8 +371,14 @@ def create_task(title: str, description: str = "", due_date: str = None, priorit
 
 
 @task_app.command("rename")
-def rename():
-    typer.echo("Renaming task...")
+def rename(task_id: int, new_title: str):
+    update_data = {"title": new_title}
+    updated_task = update_task(task_id, update_data)
+    if updated_task:
+        typer.echo(f"Task {task_id} renamed to: {new_title}")
+        df_print([updated_task])
+    else:
+        typer.echo(f"Failed to rename task {task_id}.")
 
 
 @task_app.command("update")
