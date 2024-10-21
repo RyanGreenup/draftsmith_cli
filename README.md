@@ -1,5 +1,7 @@
 # Draftsmith CLI
 
+<p><img src="./assets/logo.png" style="float: left; width: 80px" /></p>
+
 Draftsmith CLI is an implementation of an api client for the [Draftsmith API](https://github.com/RyanGreenup/draftsmith_api). The API provides a REST API to interface with a PostgreSQL database of notes, this CLI allows the user to interface with the API from the command line whilst providing a reference for implementing the API in your own projects.
 
 Draftsmith is an open source knowledge management paradigm designed for personal use. The hope is to provide sophisticated features such as Semantic Mediawiki and Notion whilst keeping the project open, easy to fork and stable to use.
