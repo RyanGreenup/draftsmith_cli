@@ -339,3 +339,25 @@ def get_task_clocks(
             return task.get("clocks", [])
 
     return []
+
+def update_task_hierarchy(
+    child_id: int,
+    hierarchy_data: Dict[str, Any],
+    base_url: str = "http://localhost:37238"
+) -> Dict[str, Any]:
+    """
+    Update the hierarchy of a task.
+
+    Args:
+        child_id (int): The ID of the child task.
+        hierarchy_data (Dict[str, Any]): A dictionary containing the hierarchy data to update.
+        base_url (str): The base URL of the API.
+
+    Returns:
+        Dict[str, Any]: The response from the server as a JSON object.
+    """
+    url = f"{base_url}/tasks/{child_id}/hierarchy"
+    headers = {"Content-Type": "application/json"}
+    response = requests.put(url, json=hierarchy_data, headers=headers)
+    response.raise_for_status()
+    return response.json()

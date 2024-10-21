@@ -30,6 +30,7 @@ from tasks import (
     update_task_clock,
     delete_task_clock,
     get_task_clocks,
+    update_task_hierarchy,
 )
 from tags import (
     create_tag,
@@ -580,8 +581,21 @@ def cli_task_list():
 
 
 @task_tree_app.command("add_parent")
-def add_parent():
-    typer.echo("Adding parent task...")
+def add_parent(
+    child_id: int = typer.Argument(..., help="ID of the child task"),
+    parent_id: int = typer.Argument(..., help="ID of the parent task to add"),
+):
+    """
+    Add a parent task to an existing task.
+    """
+    try:
+        response = update_task_hierarchy(child_id, {"parent_id": parent_id})
+        if response.get("success"):
+            typer.echo(f"Successfully added task {parent_id} as parent of task {child_id}.")
+        else:
+            typer.echo(f"Failed to add parent. Error: {response.get('error', 'Unknown error')}")
+    except Exception as e:
+        typer.echo(f"An error occurred: {str(e)}")
 
 
 @task_tree_app.command("remove_child")
