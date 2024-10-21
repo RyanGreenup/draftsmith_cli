@@ -318,7 +318,10 @@ def delete_task_clock(
     response = requests.delete(url)
     return response.json()
 
-def get_task_clocks(task_id: int, base_url: str = "http://localhost:37238") -> List[Dict[str, Any]]:
+
+def get_task_clocks(
+    task_id: int, base_url: str = "http://localhost:37238"
+) -> List[Dict[str, Any]]:
     """
     Retrieve clock entries for a specific task.
 
@@ -330,9 +333,9 @@ def get_task_clocks(task_id: int, base_url: str = "http://localhost:37238") -> L
         List[Dict[str, Any]]: A list of clock entries for the specified task.
     """
     tasks_details = get_tasks_details(base_url)
-    
+
     for task in tasks_details:
-        if task['id'] == task_id:
-            return task.get('clocks', [])
-    
+        if task["id"] == task_id:
+            return task.get("clocks", [])
+
     return []

@@ -63,11 +63,14 @@ app.add_typer(notes_app, name="notes")
 app.add_typer(tags_app, name="tags")
 app.add_typer(task_app, name="task")
 
+
 def df_print(data):
     df = pl.DataFrame(data)
     print(df)
 
+
 DF_PRINT = True
+
 
 # Notes Commands
 @notes_app.command("search")
@@ -89,43 +92,42 @@ def list_notes():
 @notes_app.command("get")
 def get(id: int, df: bool = False):
     list_notes = get_notes()
-    list_notes = [i for i in list_notes if i['id'] == id]
+    list_notes = [i for i in list_notes if i["id"] == id]
     if df:
         df_print(list_notes)
     else:
-        print(list_notes[0]['content'])
+        print(list_notes[0]["content"])
 
 
 @notes_app.command("update")
 def update(id: int, title: str | None, content: str | None):
     if title and content:
-        update_note(id, {
-            'title': title,
-            'content': content})
+        update_note(id, {"title": title, "content": content})
     elif title:
-        update_note(id, {'title': title})
+        update_note(id, {"title": title})
     elif content:
-        update_note(id, {'content': content})
+        update_note(id, {"content": content})
     get(id, df=True)
 
 
 @notes_app.command("create")
 def create(title: str, content: str):
-    new_note = create_note("http://localhost:37238", {
-        'title': title,
-        'content': content
-    })
+    new_note = create_note(
+        "http://localhost:37238", {"title": title, "content": content}
+    )
     typer.echo(f"Note created successfully with ID: {new_note['id']}")
-    get(new_note['id'], df=True)
+    get(new_note["id"], df=True)
 
 
 @notes_app.command("delete")
 def delete(id: int):
     result = delete_note(id)
-    if result.get('success'):
+    if result.get("success"):
         typer.echo(f"Note with ID {id} has been successfully deleted.")
     else:
-        typer.echo(f"Failed to delete note with ID {id}. Error: {result.get('error', 'Unknown error')}")
+        typer.echo(
+            f"Failed to delete note with ID {id}. Error: {result.get('error', 'Unknown error')}"
+        )
 
 
 # Notes Tree Commands
@@ -136,10 +138,11 @@ notes_app.add_typer(notes_tree_app, name="tree")
 def tree_list():
     notes_tree = get_notes_tree()
     if notes_tree:
+
         def print_tree(node, level=0):
             prefix = "  " * level
             typer.echo(f"{prefix}├─ {node['title']} (ID: {node['id']})")
-            for child in node.get('children', []):
+            for child in node.get("children", []):
                 print_tree(child, level + 1)
 
         for root_note in notes_tree:
@@ -151,19 +154,23 @@ def tree_list():
 @notes_tree_app.command("add_parent")
 def add_parent(child_id: int, parent_id: int):
     result = create_note_hierarchy({"parent_id": parent_id, "child_id": child_id})
-    if result.get('success'):
+    if result.get("success"):
         typer.echo(f"Successfully added note {parent_id} as parent of note {child_id}.")
     else:
-        typer.echo(f"Failed to add parent. Error: {result.get('error', 'Unknown error')}")
+        typer.echo(
+            f"Failed to add parent. Error: {result.get('error', 'Unknown error')}"
+        )
 
 
 @notes_tree_app.command("remove_child")
 def remove_child(child_id: int):
     result = delete_note_hierarchy(child_id)
-    if result.get('success'):
+    if result.get("success"):
         typer.echo(f"Successfully removed note {child_id} from its parent.")
     else:
-        typer.echo(f"Failed to remove note from parent. Error: {result.get('error', 'Unknown error')}")
+        typer.echo(
+            f"Failed to remove note from parent. Error: {result.get('error', 'Unknown error')}"
+        )
 
 
 # Tags Commands
@@ -171,7 +178,7 @@ def remove_child(child_id: int):
 def list_tags(df: bool = DF_PRINT):
     tags = list_tags_with_notes()
     if df:
-        df = pl.DataFrame(tags).select(['id', 'name', 'notes'])
+        df = pl.DataFrame(tags).select(["id", "name", "notes"])
         df_print(df)
     else:
         print(json.dumps(tags, indent=2))
@@ -187,7 +194,9 @@ def assign_tag(note_id: int, tag_name: str):
 
     # Now, we need to get the tag_id
     tags_with_notes = get_tags_with_notes()
-    tag_id = next((tag['tag_id'] for tag in tags_with_notes if tag['tag_name'] == tag_name), None)
+    tag_id = next(
+        (tag["tag_id"] for tag in tags_with_notes if tag["tag_name"] == tag_name), None
+    )
 
     if tag_id is None:
         typer.echo(f"Error: Unable to find or create tag {tag_name}")
@@ -210,38 +219,47 @@ def rename(old_name: str, new_name: str):
         return
 
     tags_with_notes = get_tags_with_notes()
-    tag_id = next((tag['id'] for tag in tags_with_notes if tag['name'] == old_name), None)
+    tag_id = next(
+        (tag["id"] for tag in tags_with_notes if tag["name"] == old_name), None
+    )
 
     if tag_id is None:
         typer.echo(f"Error: Unable to find tag '{old_name}'")
         return
 
     result = update_tag(tag_id, new_name)
-    if result.get('success'):
+    if result.get("success"):
         typer.echo(f"Successfully renamed tag '{old_name}' to '{new_name}'.")
     else:
-        typer.echo(f"Failed to rename tag. Error: {result.get('error', 'Unknown error')}")
+        typer.echo(
+            f"Failed to rename tag. Error: {result.get('error', 'Unknown error')}"
+        )
 
 
 @tags_app.command("delete")
-def delete(tag_name: str):
+def tag_cli_delete(tag_name: str):
     tags = get_tag_names()
     if tag_name not in tags:
         typer.echo(f"Error: Tag '{tag_name}' does not exist.")
         return
 
     tags_with_notes = get_tags_with_notes()
-    tag_id = next((tag['id'] for tag in tags_with_notes if tag['name'] == tag_name), None)
+    tag_id = next(
+        (tag["id"] for tag in tags_with_notes if tag["name"] == tag_name), None
+    )
 
     if tag_id is None:
         typer.echo(f"Error: Unable to find tag '{tag_name}'")
         return
 
     result = delete_tag(tag_id)
-    if result.get('success'):
+    print(result)
+    if result.get("success"):
         typer.echo(f"Successfully deleted tag '{tag_name}'.")
     else:
-        typer.echo(f"Failed to delete tag. Error: {result.get('error', 'Unknown error')}")
+        typer.echo(
+            f"Failed to delete tag. Error: {result.get('error', 'Unknown error')}"
+        )
 
 
 # Tags Tree Commands
@@ -252,10 +270,11 @@ tags_app.add_typer(tags_tree_app, name="tree")
 def tree_list():
     tags_tree = list_tags_with_notes()
     if tags_tree:
+
         def print_tree(node, level=0):
             prefix = "  " * level
             typer.echo(f"{prefix}├─ {node['name']} (ID: {node['id']})")
-            for child in node.get('children', []):
+            for child in node.get("children", []):
                 print_tree(child, level + 1)
 
         for root_tag in tags_tree:
@@ -272,18 +291,26 @@ def add_parent(child_tag: str, parent_tag: str):
         return
 
     tags_with_notes = get_tags_with_notes()
-    child_id = next((tag['id'] for tag in tags_with_notes if tag['name'] == child_tag), None)
-    parent_id = next((tag['id'] for tag in tags_with_notes if tag['name'] == parent_tag), None)
+    child_id = next(
+        (tag["id"] for tag in tags_with_notes if tag["name"] == child_tag), None
+    )
+    parent_id = next(
+        (tag["id"] for tag in tags_with_notes if tag["name"] == parent_tag), None
+    )
 
     if child_id is None or parent_id is None:
         typer.echo(f"Error: Unable to find one or both tags.")
         return
 
     result = create_tag_hierarchy(parent_id, child_id)
-    if result.get('success'):
-        typer.echo(f"Successfully added tag '{parent_tag}' as parent of tag '{child_tag}'.")
+    if result.get("success"):
+        typer.echo(
+            f"Successfully added tag '{parent_tag}' as parent of tag '{child_tag}'."
+        )
     else:
-        typer.echo(f"Failed to add parent tag. Error: {result.get('error', 'Unknown error')}")
+        typer.echo(
+            f"Failed to add parent tag. Error: {result.get('error', 'Unknown error')}"
+        )
 
 
 @tags_tree_app.command("remove_child")
@@ -294,30 +321,36 @@ def remove_child(child_tag: str):
         return
 
     tags_with_notes = get_tags_with_notes()
-    child_id = next((tag['id'] for tag in tags_with_notes if tag['name'] == child_tag), None)
+    child_id = next(
+        (tag["id"] for tag in tags_with_notes if tag["name"] == child_tag), None
+    )
 
     if child_id is None:
         typer.echo(f"Error: Unable to find tag '{child_tag}'")
         return
 
     result = delete_tag_hierarchy_entry(child_id)
-    if result.get('success'):
+    if result.get("success"):
         typer.echo(f"Successfully removed tag '{child_tag}' from its parent.")
     else:
-        typer.echo(f"Failed to remove tag from parent. Error: {result.get('error', 'Unknown error')}")
+        typer.echo(
+            f"Failed to remove tag from parent. Error: {result.get('error', 'Unknown error')}"
+        )
 
 
 @tags_app.command("filter")
 def filter(tag_name: str):
     tags_with_notes = get_tags_with_notes()
-    filtered_tag = next((tag for tag in tags_with_notes if tag['name'] == tag_name), None)
+    filtered_tag = next(
+        (tag for tag in tags_with_notes if tag["name"] == tag_name), None
+    )
 
     if filtered_tag is None:
         typer.echo(f"Error: Tag '{tag_name}' not found.")
         return
 
     typer.echo(f"Notes tagged with '{tag_name}':")
-    for note in filtered_tag.get('notes', []):
+    for note in filtered_tag.get("notes", []):
         typer.echo(f"- {note['title']} (ID: {note['id']})")
 
 
@@ -337,17 +370,19 @@ def search(query: str, tags: List[str] = typer.Option([], "--tag", "-t")):
     # Create a set of note IDs that have all the specified tags
     tagged_note_ids = set()
     for tag_name in tags:
-        tag = next((t for t in tags_with_notes if t['name'] == tag_name), None)
+        tag = next((t for t in tags_with_notes if t["name"] == tag_name), None)
         if tag is None:
             typer.echo(f"Warning: Tag '{tag_name}' not found.")
             continue
         if not tagged_note_ids:
-            tagged_note_ids = set(note['id'] for note in tag['notes'])
+            tagged_note_ids = set(note["id"] for note in tag["notes"])
         else:
-            tagged_note_ids &= set(note['id'] for note in tag['notes'])
+            tagged_note_ids &= set(note["id"] for note in tag["notes"])
 
     # Filter the search results to only include notes with all specified tags
-    filtered_results = [note for note in search_results if note['id'] in tagged_note_ids]
+    filtered_results = [
+        note for note in search_results if note["id"] in tagged_note_ids
+    ]
 
     if filtered_results:
         typer.echo(f"Search results for query '{query}' with tags {', '.join(tags)}:")
@@ -363,29 +398,43 @@ def create_task_cli(
     title: str = typer.Option(None, "--title", "-t"),
     description: str = typer.Option(None, "--description", "-d"),
     priority: int = typer.Option(3, "--priority", "-p", min=1, max=5),
-    goal_relationship: int = typer.Option(3, "--goal-relationship", "-g", min=1, max=5)
+    goal_relationship: int = typer.Option(3, "--goal-relationship", "-g", min=1, max=5),
 ):
     task_data = {
-        "note_id": note_id,
+        "note_id": 3,
         "status": "todo",
-        "title": title,
-        "description": description,
-        "priority": priority,
-        "goal_relationship": goal_relationship
+        "effort_estimate": 2.5,
+        "actual_effort": 0,
+        "deadline": "2023-06-30T15:00:00Z",
+        "priority": 3,
+        "all_day": False,
+        "goal_relationship": 4,
     }
-    # Remove None values
     task_data = {k: v for k, v in task_data.items() if v is not None}
     try:
-        new_task = create_task(task_data)
-        if new_task:
-            typer.echo(f"Task created successfully for note ID: {note_id}")
-            df_print([new_task])
-        else:
-            typer.echo(f"Failed to create task for note ID: {note_id}")
-    except requests.exceptions.HTTPError as e:
-        typer.echo(f"HTTP Error occurred: {e}")
-        typer.echo(f"Response content: {e.response.content}")
+        response = create_task(task_data)
+        typer.echo(response["id"])
+    except Exception as e:
+        typer.echo(f"Failed to create task. Error: {e}")
 
+
+@task_app.command("delete")
+def task_delete_cli(id: int, use_note_id: bool = False):
+    """
+    Delete the task given its ID or note ID.
+
+    The `use_note_id` flag can be used to delete the task by note ID instead of task ID.
+    """
+    if use_note_id:
+        tasks = get_tasks_details()
+        tasks = [task for task in tasks if task["note_id"] == id]
+        if not tasks:
+            typer.echo(f"No tasks found for note ID {id}.")
+            return
+        # There should only be one task per note ID
+        id = tasks[0]["id"]
+    response = delete_task(id)
+    print(response)
 
 
 @task_app.command("rename")
@@ -400,7 +449,13 @@ def rename(task_id: int, new_title: str):
 
 
 @task_app.command("update")
-def update(task_id: int, title: str = None, description: str = None, due_date: str = None, priority: int = None):
+def update(
+    task_id: int,
+    title: str = None,
+    description: str = None,
+    due_date: str = None,
+    priority: int = None,
+):
     update_data = {}
     if title is not None:
         update_data["title"] = title
@@ -423,21 +478,12 @@ def update(task_id: int, title: str = None, description: str = None, due_date: s
         typer.echo(f"Failed to update task {task_id}.")
 
 
-@task_app.command("delete")
-def delete(task_id: int):
-    result = delete_task(task_id)
-    if result.get('success'):
-        typer.echo(f"Task with ID {task_id} has been successfully deleted.")
-    else:
-        typer.echo(f"Failed to delete task with ID {task_id}. Error: {result.get('error', 'Unknown error')}")
-
-
 @task_app.command("schedule")
 def schedule(task_id: int, schedule_type: str, schedule_value: str):
     schedule_data = {
         "task_id": task_id,
         "schedule_type": schedule_type,
-        "schedule_value": schedule_value
+        "schedule_value": schedule_value,
     }
     new_schedule = create_task_schedule(schedule_data)
     if new_schedule:
@@ -450,12 +496,10 @@ def schedule(task_id: int, schedule_type: str, schedule_value: str):
 @task_app.command("clock_in")
 def clock_in(task_id: int):
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    clock_data = {
-        "task_id": task_id,
-        "clock_in": current_time,
-        "clock_out": None
-    }
-    new_clock = create_task_clock(task_id, clock_data["clock_in"], clock_data["clock_out"])
+    clock_data = {"task_id": task_id, "clock_in": current_time, "clock_out": None}
+    new_clock = create_task_clock(
+        task_id, clock_data["clock_in"], clock_data["clock_out"]
+    )
     if new_clock:
         typer.echo(f"Clocked in for task ID {task_id} at {current_time}")
         df_print([new_clock])
@@ -474,14 +518,16 @@ def clock_out(task_id: int):
         return
 
     latest_clock = task_clocks[-1]
-    if latest_clock['clock_out']:
+    if latest_clock["clock_out"]:
         typer.echo(f"Task ID {task_id} is not currently clocked in")
         return
 
     # Update the clock entry with the clock-out time
-    updated_clock = update_task_clock(latest_clock['id'], {"clock_out": current_time})
+    updated_clock = update_task_clock(latest_clock["id"], {"clock_out": current_time})
     if updated_clock:
-        duration = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S") - datetime.strptime(latest_clock['clock_in'], "%Y-%m-%d %H:%M:%S")
+        duration = datetime.strptime(
+            current_time, "%Y-%m-%d %H:%M:%S"
+        ) - datetime.strptime(latest_clock["clock_in"], "%Y-%m-%d %H:%M:%S")
         typer.echo(f"Clocked out for task ID {task_id} at {current_time}")
         typer.echo(f"Duration: {duration}")
         df_print([updated_clock])
@@ -497,10 +543,11 @@ task_app.add_typer(task_tree_app, name="tree")
 def tree_list():
     tasks_tree = get_tasks_tree()
     if tasks_tree:
+
         def print_tree(node, level=0):
             prefix = "  " * level
             typer.echo(f"{prefix}├─ {node['title']} (ID: {node['id']})")
-            for child in node.get('children', []):
+            for child in node.get("children", []):
                 print_tree(child, level + 1)
 
         for root_task in tasks_tree:
@@ -508,17 +555,19 @@ def tree_list():
     else:
         typer.echo("No tasks found or unable to retrieve the tasks tree.")
 
-@task_tree_app.command("list")
+
+@task_app.command("list")
 def cli_task_list():
     tasks = get_tasks_details()
     if tasks:
         typer.echo("Task List:")
         for task in tasks:
-            status = task.get('status', 'Unknown')
-            priority = task.get('priority', 'N/A')
-            goal_relationship = task.get('goal_relationship', 'N/A')
-            deadline = task.get('deadline', 'Not set')
-            typer.echo(f"ID: {task['id']}")
+            status = task.get("status", "Unknown")
+            priority = task.get("priority", "N/A")
+            goal_relationship = task.get("goal_relationship", "N/A")
+            deadline = task.get("deadline", "Not set")
+            typer.echo(f"Task ID: {task['id']}")
+            typer.echo(f"Note ID: {task['note_id']}")
             typer.echo(f"Title: {task.get('title', 'Untitled')}")
             typer.echo(f"Status: {status}")
             typer.echo(f"Priority: {priority}")
@@ -566,4 +615,3 @@ def schedule_list():
 
 if __name__ == "__main__":
     app()
-
