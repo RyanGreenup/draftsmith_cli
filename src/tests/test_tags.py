@@ -2,7 +2,7 @@ import pytest
 import requests_mock
 from typing import Dict, Any, List
 from urllib.parse import quote
-from tags import create_tag, assign_tag_to_note
+from tags import create_tag, assign_tag_to_note, update_tag
 
 
 def test_create_tag():
@@ -39,3 +39,15 @@ def assign_tag_to_note(
     tag_data = {"tag_id": tag_id}
     response = requests.post(url, json=tag_data, headers=headers)
     return response.json()
+
+
+def test_update_tag():
+    base_url = "http://localhost:37238"
+    tag_id = 1
+    new_name = "New Tag Name"
+    expected_response: Dict[str, Any] = {"message": "Tag updated successfully"}
+
+    with requests_mock.Mocker() as m:
+        m.put(f"{base_url}/tags/{tag_id}", json=expected_response)
+        response = update_tag(tag_id, new_name, base_url)
+        assert response == expected_response

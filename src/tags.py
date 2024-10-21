@@ -50,3 +50,28 @@ def assign_tag_to_note(
     tag_data = {"tag_id": tag_id}
     response = requests.post(url, json=tag_data, headers=headers)
     return response.json()
+
+
+def update_tag(
+    tag_id: int, new_name: str, base_url: str = "http://localhost:37238"
+) -> Dict[str, Any]:
+    """
+    Update the name of a tag by sending a PUT request.
+
+    Args:
+        tag_id (int): The ID of the tag to update.
+        new_name (str): The new name for the tag.
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        Dict[str, Any]: The response from the server as a JSON object.
+
+    Example:
+        >>> update_tag(1, "New Tag Name")
+        {"message": "Tag updated successfully"}
+    """
+    url = f"{base_url}/tags/{tag_id}"
+    headers = {"Content-Type": "application/json"}
+    tag_data = {"name": new_name}
+    response = requests.put(url, json=tag_data, headers=headers)
+    return response.json()
