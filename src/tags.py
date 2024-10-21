@@ -247,3 +247,32 @@ def delete_tag_hierarchy_entry(
     url = f"{base_url}/tags/hierarchy/{tag_hierarchy_id}"
     response = requests.delete(url)
     return response.json()
+
+
+def list_tags_with_notes(
+    base_url: str = "http://localhost:37238",
+) -> List[Dict[str, Any]]:
+    """
+    List the tags and the notes they contain by sending a GET request.
+
+    Args:
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        List[Dict[str, Any]]: A list of tags with their associated notes as a JSON object.
+
+    Example:
+        >>> list_tags_with_notes()
+        [
+            {
+                "id": 1,
+                "name": "important",
+                "notes": None,
+                ...
+            },
+            ...
+        ]
+    """
+    url = f"{base_url}/tags/tree"
+    response = requests.get(url)
+    return response.json()

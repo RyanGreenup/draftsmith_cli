@@ -12,6 +12,7 @@ from tags import (
     create_tag_hierarchy,
     update_tag_hierarchy,
     delete_tag_hierarchy_entry,
+    list_tags_with_notes,
 )
 
 
@@ -145,6 +146,28 @@ def test_delete_tag_hierarchy_entry():
             f"{base_url}/tags/hierarchy/{tag_hierarchy_id}", json=expected_response
         )
         response = delete_tag_hierarchy_entry(tag_hierarchy_id, base_url)
+        assert response == expected_response
+
+
+def test_list_tags_with_notes():
+    base_url = "http://localhost:37238"
+    expected_response: List[Dict[str, Any]] = [
+        {
+            "id": 1,
+            "name": "important",
+            "notes": None,
+            "children": [
+                {"id": 2, "name": "urgent", "notes": [{"id": 2, "title": "Foo"}]},
+                {"id": 3, "name": "todo", "notes": [{"id": 2, "title": "Foo"}]},
+            ],
+        },
+        {"id": 4, "name": "done", "notes": None},
+        {"id": 5, "name": "important", "notes": None},
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.get(f"{base_url}/tags/tree", json=expected_response)
+        response = list_tags_with_notes(base_url)
         assert response == expected_response
 
 
