@@ -406,8 +406,12 @@ def update(task_id: int, title: str = None, description: str = None, due_date: s
 
 
 @task_app.command("delete")
-def delete():
-    typer.echo("Deleting task...")
+def delete(task_id: int):
+    result = delete_task(task_id)
+    if result.get('success'):
+        typer.echo(f"Task with ID {task_id} has been successfully deleted.")
+    else:
+        typer.echo(f"Failed to delete task with ID {task_id}. Error: {result.get('error', 'Unknown error')}")
 
 
 @task_app.command("schedule")
