@@ -2,6 +2,7 @@
 import typer
 import json
 import polars as pl
+from typing import List
 from notes import (
     create_note,
     update_note,
