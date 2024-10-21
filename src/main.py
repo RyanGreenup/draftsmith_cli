@@ -510,9 +510,24 @@ def tree_list():
 
 @task_tree_app.command("list")
 def cli_task_list():
-    # Implement this by using:
-    # get_tasks_details()
-    print("TODO")
+    tasks = get_tasks_details()
+    if tasks:
+        typer.echo("Task List:")
+        for task in tasks:
+            status = task.get('status', 'Unknown')
+            priority = task.get('priority', 'N/A')
+            goal_relationship = task.get('goal_relationship', 'N/A')
+            deadline = task.get('deadline', 'Not set')
+            typer.echo(f"ID: {task['id']}")
+            typer.echo(f"Title: {task.get('title', 'Untitled')}")
+            typer.echo(f"Status: {status}")
+            typer.echo(f"Priority: {priority}")
+            typer.echo(f"Goal Relationship: {goal_relationship}")
+            typer.echo(f"Deadline: {deadline}")
+            typer.echo(f"Description: {task.get('description', 'No description')}")
+            typer.echo("---")
+    else:
+        typer.echo("No tasks found or unable to retrieve task details.")
 
 
 @task_tree_app.command("add_parent")
