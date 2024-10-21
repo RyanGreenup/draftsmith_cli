@@ -3,6 +3,7 @@ import typer
 import json
 import polars as pl
 from typing import List
+from datetime import datetime
 from notes import (
     create_note,
     update_note,
@@ -430,8 +431,19 @@ def schedule(task_id: int, schedule_type: str, schedule_value: str):
 
 
 @task_app.command("clock_in")
-def clock_in():
-    typer.echo("Clocking in task...")
+def clock_in(task_id: int):
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    clock_data = {
+        "task_id": task_id,
+        "clock_in": current_time,
+        "clock_out": None
+    }
+    new_clock = create_task_clock(task_id, clock_data["clock_in"], clock_data["clock_out"])
+    if new_clock:
+        typer.echo(f"Clocked in for task ID {task_id} at {current_time}")
+        df_print([new_clock])
+    else:
+        typer.echo(f"Failed to clock in for task ID {task_id}")
 
 
 @task_app.command("clock_out")
