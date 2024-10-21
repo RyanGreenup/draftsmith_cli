@@ -11,6 +11,7 @@ from tasks import (
     create_task_schedule,
     update_task_schedule,
     delete_task_schedule,
+    create_task_schedule,
 )
 
 
@@ -221,6 +222,23 @@ def test_delete_task_schedule():
     with requests_mock.Mocker() as m:
         m.delete(f"{base_url}/task_schedules/{schedule_id}", json=expected_response)
         response = delete_task_schedule(schedule_id, base_url)
+        assert response == expected_response
+
+
+def test_create_task_schedule():
+    base_url = "http://localhost:37238"
+    task_id = 2
+    start_datetime = "2023-06-01T09:00:00Z"
+    end_datetime = "2023-06-01T17:00:00Z"
+
+    expected_response: Dict[str, Any] = {
+        "id": task_id,
+        "message": "Task clock entry created successfully",
+    }
+
+    with requests_mock.Mocker() as m:
+        m.post(f"{base_url}/task_schedules", json=expected_response)
+        response = create_task_schedule(task_id, start_datetime, end_datetime, base_url)
         assert response == expected_response
 
 

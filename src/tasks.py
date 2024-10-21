@@ -229,3 +229,40 @@ def delete_task_schedule(
     url = f"{base_url}/task_schedules/{schedule_id}"
     response = requests.delete(url)
     return response.json()
+
+
+def create_task_schedule(
+    task_id: int,
+    start_datetime: str,
+    end_datetime: str,
+    base_url: str = "http://localhost:37238",
+) -> Dict[str, Any]:
+    """
+    Create a task schedule (clock in) entry by sending a POST request.
+
+    Args:
+        task_id (int): The ID of the task.
+        start_datetime (str): The start datetime in ISO 8601 format.
+        end_datetime (str): The end datetime in ISO 8601 format.
+        base_url (str): The base URL of the API (default: "http://localhost:37238").
+
+    Returns:
+        Dict[str, Any]: The response from the server as a JSON object.
+
+    Example:
+        >>> create_task_schedule(
+                2,
+                "2023-06-01T09:00:00Z",
+                "2023-06-01T17:00:00Z"
+            )
+        {"id": 2, "message": "Task clock entry created successfully"}
+    """
+    url = f"{base_url}/task_schedules"
+    headers = {"Content-Type": "application/json"}
+    schedule_data = {
+        "task_id": task_id,
+        "start_datetime": start_datetime,
+        "end_datetime": end_datetime,
+    }
+    response = requests.post(url, json=schedule_data, headers=headers)
+    return response.json()
