@@ -151,3 +151,31 @@ def get_tasks_tree(base_url: str = "http://localhost:37238") -> List[Dict[str, A
     response = requests.get(url)
     response.raise_for_status()  # Raise an exception for HTTP errors
     return response.json()
+
+
+def create_task_schedule(
+    task_schedule_data: Dict[str, str], base_url: str = "http://localhost:8080"
+) -> Dict[str, Any]:
+    """
+    Create a new task schedule by sending a POST request to the API.
+
+    Args:
+        task_schedule_data (Dict[str, str]): A dictionary containing the task schedule data,
+                                             e.g., {'task_id': 2, 'start_datetime': '2023-06-01T09:00:00Z', 'end_datetime': '2023-06-01T17:00:00Z'}.
+        base_url (str): The base URL of the API (default: "http://localhost:8080").
+
+    Returns:
+        Dict[str, Any]: The response from the server as a JSON object.
+
+    Example:
+        >>> create_task_schedule({
+                "task_id": 2,
+                "start_datetime": "2023-06-01T09:00:00Z",
+                "end_datetime": "2023-06-01T17:00:00Z"
+            })
+        {"id": 5, "message": "Task schedule created successfully"}
+    """
+    url = f"{base_url}/task_schedules"
+    headers = {"Content-Type": "application/json"}
+    response = requests.post(url, json=task_schedule_data, headers=headers)
+    return response.json()

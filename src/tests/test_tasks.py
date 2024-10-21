@@ -8,6 +8,7 @@ from tasks import (
     delete_task,
     get_tasks_details,
     get_tasks_tree,
+    create_task_schedule,
 )
 
 
@@ -166,6 +167,25 @@ def test_get_tasks_tree():
     with requests_mock.Mocker() as m:
         m.get(f"{base_url}/tasks/tree", json=expected_response)
         response = get_tasks_tree(base_url)
+        assert response == expected_response
+
+
+def test_create_task_schedule():
+    base_url = "http://localhost:8080"
+    task_schedule_data: Dict[str, str] = {
+        "task_id": 2,
+        "start_datetime": "2023-06-01T09:00:00Z",
+        "end_datetime": "2023-06-01T17:00:00Z",
+    }
+
+    expected_response: Dict[str, Any] = {
+        "id": 5,
+        "message": "Task schedule created successfully",
+    }
+
+    with requests_mock.Mocker() as m:
+        m.post(f"{base_url}/task_schedules", json=expected_response)
+        response = create_task_schedule(task_schedule_data, base_url)
         assert response == expected_response
 
 
