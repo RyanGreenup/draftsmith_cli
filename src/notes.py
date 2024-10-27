@@ -259,8 +259,8 @@ def get_notes_tree(base_url: str = "http://localhost:37238") -> List[Dict[str, A
     Returns:
         List[Dict[str, Any]]: The response from the server, representing the notes tree.
 
-    Example:
-        >>> get_notes_tree()
+    Example json Response:
+        >>> get_notes_tree().model_dump()
         [
           {
             "id": 3,

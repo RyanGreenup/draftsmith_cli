@@ -21,7 +21,7 @@ This client implementation serves to document the API and provide a reference fo
 
 ## Installation
 
-To get started with NoteMaster:
+To get started with Draftsmith:
 
 ### Backend
 
